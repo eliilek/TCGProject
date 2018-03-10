@@ -1,11 +1,18 @@
 from django.db import models
 from django.utils import timezone
 
+class Token(models.Model):
+    bearer = models.CharField(max_length=1000, blank=True, default="")
+    expires = models.DateTimeField(blank=True, null=True)
+
 class Seller(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     email = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     notes = models.CharField(max_length=500, default="")
+
+    def __unicode__(self):
+        return self.name
 
 # Create your models here.
 class CardPurchaseBlock(models.Model):

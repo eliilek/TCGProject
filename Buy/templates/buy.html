@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  {% load static %}
+	<meta charset="UTF-8">
+	<title>RoboKlein</title>
+  <link rel="stylesheet" href="{% static 'Buy/style.css' %}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+</head>
+
+
+<body>
+	<button class="btn btn-primary" id="addbtn">Add Line</button>
+	<div class="robocontainer .form-group">
+		<button type="button" class="btn btn-warning trashbtn roboitem">X</button>
+		<div class="roboitem">
+			<label>Cardname: <input type="text" placeholder="Card Name" name="cardname"></label>
+		</div>
+		<div class="roboitem" >
+			<label>Expansion:
+				<select name="expansion">
+					<option value="1" selected="true">1</option>
+					<option value="2">2</option>
+					<option value="3">Global Series: Jiang Yanggu and Mu Yanling</option>
+				</select>
+			</label>
+		</div>
+		<div class="roboitem" >
+			<label>QTY:
+				<select name="quantity">
+					<option value="1" selected="true">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+				</select>
+			</label>
+		</div>
+
+		<div class="roboitem">
+			<label>Condition:
+				<select name="condition">
+					<option value="1">NM</option>
+					<option value="2" selected="true">LP</option>
+					<option value="3">MP</option>
+					<option value="4">HP</option>
+					<option value="5">DM</option>
+				</select>
+			</label>
+		</div>
+
+		<div class="roboitem">
+			<label>Buy Price: $
+				<input type="number" name="buyprice" step=".01" min="0" placeholder="0.00">
+			</label>
+		</div>
+
+		<div class="roboitem">
+			<label><input type="checkbox" checked="true" name="autolist">Auto-List</label>
+		</div>
+	</div>
+
+		<form action="" method="POST" class="roboform">
+
+		</form>
+
+
+<button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
+<script src="{% static 'Buy/scripts.js' %}"></script>
+</body>
+</html>

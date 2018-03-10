@@ -1,0 +1,43 @@
+body{
+	display: grid;
+}
+
+#addbtn{
+	padding: 5px;
+	margin: 30px;
+}
+
+#submitbtn{
+	padding: 5px;
+	margin: 30px;
+	float: right;
+}
+
+.robocontainer {
+	display: flex;
+	align-content: center;
+	justify-content: center;
+	align-items: baseline;
+}
+
+.roboitem{
+	padding: 10px;
+	/*flex-grow: 1;*/
+}
+
+.trashbtn{
+	flex-grow: 0;
+	margin: 2px;
+}
+
+div[name=condition] {
+	flex-grow: 0;
+}
+
+div[name=buyprice] > * > *{
+	max-width: 75px;
+}
+
+input[type='number']{
+  text-align:left;
+}
