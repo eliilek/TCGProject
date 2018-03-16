@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from models import *
+from Buy.models import *
 import json
 import datetime
 import requests
@@ -13,7 +13,8 @@ def update_bearer():
             return Token.objects.latest('expires')
     r = requests.get('https://api.tcgplayer.com/token', headers={'Content-Type':'application/x-www-form-urlencoded', 'X-Tcg-Access-Token':os.environ['access_token']}, data={'grant_type':'client_credentials', 'client_id':os.environ['public_key'], 'client_secret':os.environ['private_key']})
     response_dict = r.json()
-    token = Token(bearer=response_dict['access_token'], expires=parse(response_dict['expires']))
+    print(response_dict)
+    token = Token(bearer=response_dict['access_token'], expires=parse(response_dict['.expires']))
     token.save()
     return token
 

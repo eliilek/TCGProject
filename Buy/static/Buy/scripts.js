@@ -1,40 +1,52 @@
 $("#addbtn").click(roboclone);
 $(".trashbtn").click(robodelete);
 $(".robocontainer").toggle();
-var index = 0;
+
+
+//names of input objects
+var namesofinputobjects = {
+	cardname : "cardname",
+	buyprice : "buyprice",
+	autolist : "autolist"
+}
+
+//names of select objects
+var namesofselectobjects = {
+	expansion : "expansion",
+	quantity : "quantity",
+	condition : "condition"
+}
+
+//click the add button once, to create the first card element
 $("#addbtn").click();
 
-
-
 function roboclone (){
-	console.log(index);
 	// Grab the last Div on the page - Clone it
 	// Make sure the event listeners and children's event listeners are cloned also (true true)
 	// Append it to the Form element, then Show it.
-	// console.log($("input[name='cardname"+index+"']").attr("name", "cardname"+index));
-	// $("input[name='cardname']").attr("name", );
-	var clone = $(".robocontainer:first").clone(true, true);
-	clone.find("input[name='cardname']").name="cardname"+index;
-	clone.find("input[name='expansion']").name="expansion"+index;
-	clone.find("input[name='quantity']").name="quantity"+index;
-	clone.find("input[name='condition']").name="condition"+index;
-	clone.find("input[name='buyprice']").name="buyprice"+index;
-	clone.find("input[name='autolist']").name="autolist"+index;
-	clone.appendTo($(".roboform"));
+	$(".robocontainer:first").clone(true, true).appendTo($(".roboform"));
 	$(".robocontainer:last").toggle();
-	// $("input[name='cardname""']").attr("name", function(index) {
-	// 	return "cardname"+index;
-	// });
-	//This code grabs all divs, sets the Div ID's to div-id0, div-id1 .. etc, then sets the innerhtml inside the spans to be the div-idX.
-// 	$( "div" )
-//   .attr( "id", function( arr ) {
-//     return "div-id" + arr;
-//   })
-//   .each(function() {
-//     $( "span", this ).html( "(id = '<b>" + this.id + "</b>')" );
-// });
+	for (var name in namesofinputobjects){
+		roboinputnamer(name);
+	}
+	for (var name in namesofselectobjects){
+		roboselectnamer(name);
+	}
 }
 
+//select the name then change the names of all of the input objects to be "input-object-name-X" - .e.g cardname-1, cardname-2
+function roboinputnamer (nameofformobject) {
+		$("input[name|='"+nameofformobject+"']").attr("name", function (i){
+		return nameofformobject+"-"+i;
+	});
+}
+
+//select the name then change the names of all of the select objects to be "select-object-name-X" - .e.g expansion-1, expansion-2
+function roboselectnamer (nameofformobject) {
+		$("select[name|='"+nameofformobject+"']").attr("name", function (i){
+		return nameofformobject+"-"+i;
+	});
+}
 
 // Delete the X buttons parent element - and confirm - These nodes are the current Node path from the X delete button object
 function robodelete (){
