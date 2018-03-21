@@ -1,74 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  {% load static %}
-	<meta charset="UTF-8">
-	<title>RoboKlein</title>
-  <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-	<script
-			  src="https://code.jquery.com/jquery-3.3.1.min.js"
-			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-			  crossorigin="anonymous"></script>
-</head>
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>RoboKlein</title>
+    <link rel="stylesheet" href="{% static Buy/styles.css %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script
+      src="https://code.jquery.com/jquery-3.3.1.min.js"
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
 
+  	<div id="sellerinfo">
+  		<div id="sellername" class="sellerinfodiv">
+  			<label for="sellername">Seller Name:<input class="sellerinfoitem sellerinfoitem-sm" type="text" name="sellername"></label>
+  		</div>
+  		<div id="selleremail" class="sellerinfodiv">
+  			<label for="selleremail">Seller Email: <input class="sellerinfoitem sellerinfoitem-sm" type="Email" name="selleremail"></label>
+  		</div>
+  		<div id="sellerphone" class="sellerinfodiv">
+  			<label for="sellerphone">Seller Phone:<input class="sellerinfoitem sellerinfoitem-sm" type="Phone" name="sellerphone"></label>
+  		</div>
+  		<div id="sellernotes" class="sellerinfodiv">
+  			<label for="sellernotes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="sellernotes"></textarea></label>
+  		</div>
+  	</div>
 
-<body>
-	<button class="btn btn-primary" id="addbtn">Add Line</button>
-	<div class="robocontainer .form-group">
-		<button type="button" class="btn btn-warning trashbtn roboitem">X</button>
-		<div class="roboitem">
-			<label>Cardname: <input type="text" placeholder="Card Name" name="cardname"></label>
-		</div>
-		<div class="roboitem" >
-			<label>Expansion:
-				<select name="expansion">
-					<option value="1" selected="true">1</option>
-					<option value="2">2</option>
-					<option value="3">Global Series: Jiang Yanggu and Mu Yanling</option>
-				</select>
-			</label>
-		</div>
-		<div class="roboitem" >
-			<label>QTY:
-				<select name="quantity">
-					<option value="1" selected="true">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-				</select>
-			</label>
-		</div>
+    <button class="btn btn-primary" id="addbtn">Add Line</button>
 
-		<div class="roboitem">
-			<label>Condition:
-				<select name="condition">
-					<option value="1">NM</option>
-					<option value="2" selected="true">LP</option>
-					<option value="3">MP</option>
-					<option value="4">HP</option>
-					<option value="5">DM</option>
-				</select>
-			</label>
-		</div>
+    <div class="robocontainer .form-group">
 
-		<div class="roboitem">
-			<label>Buy Price: $
-				<input type="number" name="buyprice" step=".01" min="0" placeholder="0.00">
-			</label>
-		</div>
+      <button type="button" class="btn btn-warning trashbtn roboitem">X</button>
 
-		<div class="roboitem">
-			<label><input type="checkbox" checked="true" name="autolist">Auto-List</label>
-		</div>
-	</div>
+      <div class="roboitem">
+        <label>Cardname: <input type="text" placeholder="Card Name" name="cardname"></label>
+      </div>
 
-		<form action="" method="POST" class="roboform">
+      <div class="roboitem" >
+        <label>
+          Expansion:
+          <select name="expansion">
+            <option value="1" selected="true">1</option>
+            <option value="2">2</option>
+            <option value="3">Global Series: Jiang Yanggu and Mu Yanling</option>
+          </select>
+        </label>
+      </div>
 
-		</form>
+      <div class="roboitem">
+        <label>QTY:
+        <input class="quantityitem" type="number" name="quantity" step="1" min="1" placeholder="1" value="1">
+        </label>
+      </div>
 
+      <div class="roboitem">
+        <label>
+          Condition:
+          <select name="condition">
+            <option value="1">NM</option>
+            <option value="2" selected="true">LP</option>
+            <option value="3">MP</option>
+            <option value="4">HP</option>
+            <option value="5">DM</option>
+          </select>
+        </label>
+      </div>
 
-<button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
-<script src="{% static 'Buy/scripts.js' %}"></script>
-</body>
+      <div class="roboitem">
+        <label>Buy Price: $
+        <input class="buyitem" type="number" name="buyprice" step=".01" min="0" placeholder="0" value="0">
+        </label>
+      </div>
+
+      <div class="roboitem">
+        <label><input type="checkbox" checked="true" name="autolist">List</label>
+      </div>
+
+    </div>
+
+    <form action="" method="GET" id="roboform">
+    </form>
+
+    <div id="totalbuyprice">
+    	<label>Total Buy Price: $
+        <input class="totalbuyitem" type="number" name="totalbuyprice" step=".01" min="0" placeholder="0">
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
+
+    <script src="{% static Buy/scripts.js %}"></script>
+
+  </body>
 </html>

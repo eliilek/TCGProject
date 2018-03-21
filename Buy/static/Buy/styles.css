@@ -13,6 +13,10 @@ body{
 	float: right;
 }
 
+#totalbuyprice{
+	margin-left: 15px;
+}
+
 .robocontainer {
 	display: flex;
 	align-content: center;
@@ -22,7 +26,47 @@ body{
 
 .roboitem{
 	padding: 10px;
-	/*flex-grow: 1;*/
+	flex-grow: 1;
+}
+
+#sellerinfo {
+	display: grid;
+	grid-gap: 10px;
+	grid-template-areas:
+	"name notes"
+	"email notes"
+	"phone notes"
+}
+
+.sellerinfodiv{
+	margin: 5px;
+	margin-left: 10px;
+	padding-left: 20px;
+}
+
+.sellerinfoitem-sm{
+	min-width: 400px;
+}
+
+#sellername{
+	grid-area: name;
+}
+
+#selleremail{
+	grid-area: email;
+}
+
+#sellerphone{
+	grid-area: phone;
+}
+
+#sellernotes{
+	grid-area: notes;
+}
+
+.quantityitem{
+	max-width: 50px;
+	padding-left: 15px;
 }
 
 .trashbtn{

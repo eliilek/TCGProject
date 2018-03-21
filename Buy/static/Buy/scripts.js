@@ -1,21 +1,40 @@
 $("#addbtn").click(roboclone);
 $(".trashbtn").click(robodelete);
+$("#submitbtn").click(robosubmit);
 $(".robocontainer").toggle();
+$(".buyitem").change(sumbuyprice);
 
 
 //names of input objects
 var namesofinputobjects = {
 	cardname : "cardname",
 	buyprice : "buyprice",
+	quantity : "quantity",
 	autolist : "autolist"
 }
 
 //names of select objects
 var namesofselectobjects = {
 	expansion : "expansion",
-	quantity : "quantity",
 	condition : "condition"
 }
+
+
+//Disable enter key from submitting form when entering text
+$(document).on('keyup keypress', 'form input[type="text"]', function(e) {
+  if(e.which == 13) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+//Disable enter key from submitting form when entering numbers
+$(document).on('keyup keypress', 'form input[type="number"]', function(e) {
+  if(e.which == 13) {
+    e.preventDefault();
+    return false;
+  }
+});
 
 //click the add button once, to create the first card element
 $("#addbtn").click();
@@ -24,7 +43,7 @@ function roboclone (){
 	// Grab the last Div on the page - Clone it
 	// Make sure the event listeners and children's event listeners are cloned also (true true)
 	// Append it to the Form element, then Show it.
-	$(".robocontainer:first").clone(true, true).appendTo($(".roboform"));
+	$(".robocontainer:first").clone(true, true).appendTo($("#roboform"));
 	$(".robocontainer:last").toggle();
 	for (var name in namesofinputobjects){
 		roboinputnamer(name);
@@ -53,4 +72,20 @@ function robodelete (){
 	if (confirm("Remove " + this.parentNode.childNodes[3].childNodes[1].childNodes[1].value + "?")){
 		this.parentNode.remove();
 	}
+}
+
+function robosubmit() {
+	if (confirm("Purchase?")){
+		$("#sellerinfo").clone(true, true).appendTo($("#roboform"));
+		document.getElementById("roboform").submit();
+	}
+}
+
+function sumbuyprice() {
+	var total = 0;
+	$(".buyitem").each(function(){
+		total += parseFloat($(this).val());
+	});
+	var rounded = Math.ceil(total * 100)/100;
+	$(".totalbuyitem").val(rounded);
 }
