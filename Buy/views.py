@@ -32,7 +32,10 @@ def sell(request):
     bearer_token = update_bearer()
     return render(request, 'sell.html', {'bearer':bearer_token.bearer})
 
-def seller_info(request, name):
+def seller_info(request):
+    if request.method != "GET":
+        return redirect("/")
+    name = request.GET["name"]
     try:
         seller = Seller.objects.get(name=name)
         return JsonResponse({'found':True, 'email':seller.email, 'phone':seller.phone, 'notes':seller.notes, 'id':seller.id})

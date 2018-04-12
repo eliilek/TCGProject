@@ -22,5 +22,5 @@ urlpatterns = [
     path('', views.buy, name='buy'),
     path('sell', views.sell, name='sell'),
     path('report', views.report_buy, name='report_buy'),
-    path('seller/<str:name>', views.seller_info, name='check_seller'),
+    path('seller', views.seller_info, name='check_seller'),
 ]

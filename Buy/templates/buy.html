@@ -4,7 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <title>RoboKlein</title>
-    <link rel="stylesheet" href="{% static Buy/styles.css %}">
+    <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -30,57 +30,10 @@
 
     <button class="btn btn-primary" id="addbtn">Add Line</button>
 
-    <div class="robocontainer .form-group">
-
-      <button type="button" class="btn btn-warning trashbtn roboitem">X</button>
-
-      <div class="roboitem">
-        <label>Cardname: <input type="text" placeholder="Card Name" name="cardname"></label>
+    <form action="{% url 'report_buy' %}" method="POST" id="roboform" onsubmit="return robosubmit()">
+      {% csrf_token %}
+      <div class="robocontainer form-group">
       </div>
-
-      <div class="roboitem" >
-        <label>
-          Expansion:
-          <select name="expansion">
-            <option value="1" selected="true">1</option>
-            <option value="2">2</option>
-            <option value="3">Global Series: Jiang Yanggu and Mu Yanling</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="roboitem">
-        <label>QTY:
-        <input class="quantityitem" type="number" name="quantity" step="1" min="1" placeholder="1" value="1">
-        </label>
-      </div>
-
-      <div class="roboitem">
-        <label>
-          Condition:
-          <select name="condition">
-            <option value="1">NM</option>
-            <option value="2" selected="true">LP</option>
-            <option value="3">MP</option>
-            <option value="4">HP</option>
-            <option value="5">DM</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="roboitem">
-        <label>Buy Price: $
-        <input class="buyitem" type="number" name="buyprice" step=".01" min="0" placeholder="0" value="0">
-        </label>
-      </div>
-
-      <div class="roboitem">
-        <label><input type="checkbox" checked="true" name="autolist">List</label>
-      </div>
-
-    </div>
-
-    <form action="" method="GET" id="roboform">
     </form>
 
     <div id="totalbuyprice">
@@ -91,7 +44,23 @@
 
     <button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
 
-    <script src="{% static Buy/scripts.js %}"></script>
+    <script>
+      var bearer = "{{ bearer }}";
+      function check_seller(seller_name, success_function){
+        $.get("{% url 'check_seller' %}", {'name':seller_name}, success_function);
+      }
+      function robosubmit(){
+      	if (confirm("Purchase?")){
+      		$("#sellerinfo").appendTo($("#roboform"));
+      		if(seller_id){
+      			$("#roboform").append('<input type="hidden" name="seller_id" value=' + seller_id.toString() + ' />')
+      		}
+      		return true;
+      	}
+      	return false;
+      }
+    </script>
+    <script src="{% static 'Buy/scripts.js' %}"></script>
 
   </body>
 </html>
