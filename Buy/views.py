@@ -6,6 +6,7 @@ import datetime
 import requests
 import os
 from dateutil.parser import parse
+from django.forms.models import model_to_dict
 
 def update_bearer():
     if Token.objects.all().exists():
@@ -25,7 +26,10 @@ def index(request):
 def buy(request):
     #Ensure TCGPlayer bearer token is valid
     bearer_token = update_bearer()
-    return render(request, 'buy.html', {'bearer':bearer_token.bearer})
+    standard_list = []
+    for standard_set in StandardSet.objects.all():
+        standard_list.append({'name':standard_set.name, 'abbreviation':standard_set.abbreviation})
+    return render(request, 'buy.html', {'bearer':bearer_token.bearer, 'standard_list':standard_list})
 
 def sell(request):
     #Ensure TCGPlayer bearer token is valid
@@ -45,30 +49,41 @@ def seller_info(request):
 def report_buy(request):
     if request.method != "POST":
         return redirect("/")
-    json_object = json.loads(request.body)
-    if 'seller_id' in json_object.keys():
+    print(request.POST)
+    if 'seller_id' in request.POST.keys():
         seller = Seller.objects.get(pk=json_object['seller_id'])
     else:
         seller = Seller(
-            name = json_object['seller_name'],
-            email = json_object['seller_email'],
-            phone = json_object['seller_phone']
+            name = request.POST['seller_name'],
+            email = request.POST['seller_email'],
+            phone = request.POST['seller_phone']
         )
         seller.save()
-    if 'notes' in json_object.keys():
-        seller.notes += json_object['notes']
+    if 'seller_notes' in request.POST.keys() and request.POST['sellernotes'] != "":
+        seller.notes = request.POST['sellernotes']
+        seller.save()
     block = CardPurchaseBlock(seller=seller)
     block.save()
-    for card in json_object:
-        single = SingleCardPurchase(
-            block = block,
-            name = json_object[card]['name'],
-            expansion = json_object[card]['expansion'],
-            tcgplayer_card_id = json_object[card]['card_id'],
-            buy_price = json_object[card]['buy_price'],
-            lowest_listing_at_buy = json_object[card]['lowest_listing'],
-            market_price_at_buy = json_object[card]['market_price']
-        )
-        single.save()
-        #Query API via requests, add card to inventory at price
+    index = 0
+    try:
+        while(True):
+            single = SingleCardPurchase(
+                block = block,
+                name = request.POST['card_name_'+str(index)],
+                expansion = request.POST['expansion_'+str(index)],
+                tcgplayer_card_id = request.POST['tcgplayer_card_id_'+str(index)],
+                buy_price = request.POST['price_'+str(index)],
+                initial_sell_price = request.POST['sell_price_'+str(index)],
+                lowest_listing_at_buy = request.POST['lowest_listing_at_buy_'+str(index)],
+                lowest_direct_at_buy = request.POST['lowest_direct_at_buy_'+str(index)],
+                market_price_at_buy = request.POST['market_price_'+str(index)]
+            )
+            single.save()
+            index += 1
+
+    except Exception as e:
+        print("Oops " + str(index))
+        print(e)
+
+    #TODO Query API via requests, add card to inventory at price
     return HttpResponse("You shouldn't see this")

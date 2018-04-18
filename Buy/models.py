@@ -1,6 +1,10 @@
 from django.db import models
 from django.utils import timezone
 
+class StandardSet(models.Model):
+    abbreviation = models.CharField(max_length=5, blank=True, default="")
+    name = models.CharField(max_length=200)
+
 class Token(models.Model):
     bearer = models.CharField(max_length=1000, blank=True, default="")
     expires = models.DateTimeField(blank=True, null=True)
@@ -32,6 +36,7 @@ class SingleCardPurchase(models.Model):
     buy_price = models.DecimalField(editable=False, decimal_places=2, max_digits=6)
     lowest_listing_at_buy = models.DecimalField(editable=False, decimal_places=2, max_digits=6)
     market_price_at_buy = models.DecimalField(decimal_places=2, max_digits=6)
+    initial_sell_price = models.DecimalField(decimal_places=2, max_digits=6)
     sold_on = models.DateTimeField(blank=True, null=True)
     sell_price = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
     market_price_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)

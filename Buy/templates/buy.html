@@ -14,17 +14,17 @@
   <body>
 
   	<div id="sellerinfo">
-  		<div id="sellername" class="sellerinfodiv">
-  			<label for="sellername">Seller Name:<input class="sellerinfoitem sellerinfoitem-sm" type="text" name="sellername"></label>
+  		<div id="seller_name_div" class="sellerinfodiv">
+  			<label for="seller_name">Seller Name:<input class="sellerinfoitem sellerinfoitem-sm" type="text" name="seller_name" id="seller_name"></label>
   		</div>
-  		<div id="selleremail" class="sellerinfodiv">
-  			<label for="selleremail">Seller Email: <input class="sellerinfoitem sellerinfoitem-sm" type="Email" name="selleremail"></label>
+  		<div id="seller_email_div" class="sellerinfodiv">
+  			<label for="seller_email">Seller Email: <input class="sellerinfoitem sellerinfoitem-sm" type="Email" name="seller_email" id="seller_email"></label>
   		</div>
-  		<div id="sellerphone" class="sellerinfodiv">
-  			<label for="sellerphone">Seller Phone:<input class="sellerinfoitem sellerinfoitem-sm" type="Phone" name="sellerphone"></label>
+  		<div id="seller_phone_div" class="sellerinfodiv">
+  			<label for="seller_phone">Seller Phone:<input class="sellerinfoitem sellerinfoitem-sm" type="Phone" name="seller_phone" id="seller_phone"></label>
   		</div>
-  		<div id="sellernotes" class="sellerinfodiv">
-  			<label for="sellernotes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="sellernotes"></textarea></label>
+  		<div id="seller_notes_div" class="sellerinfodiv">
+  			<label for="seller_notes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="seller_notes"></textarea></label>
   		</div>
   	</div>
 
@@ -46,10 +46,27 @@
 
     <script>
       var bearer = "{{ bearer }}";
+      console.log("{{standard_list}}");
+      var standard_list = "{{standard_list}}".replace(/&#39;/g,"\"");
+      console.log(standard_list);
+      standard_list = JSON.parse(standard_list);
+      console.log(standard_list);
       function check_seller(seller_name, success_function){
         $.get("{% url 'check_seller' %}", {'name':seller_name}, success_function);
       }
       function robosubmit(){
+        if ($("#sellername").val() == ""){
+          alert("Seller name required");
+          return false;
+        }
+        if ($("#sellerphone").val() == ""){
+          alert("Seller phone required");
+          return false;
+        }
+        if ($("#selleremail").val() == ""){
+          alert("Seller email required");
+          return false;
+        }
       	if (confirm("Purchase?")){
       		$("#sellerinfo").appendTo($("#roboform"));
       		if(seller_id){

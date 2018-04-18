@@ -48,19 +48,19 @@ body{
 	min-width: 400px;
 }
 
-#sellername{
+#seller_name_div{
 	grid-area: name;
 }
 
-#selleremail{
+#seller_email_div{
 	grid-area: email;
 }
 
-#sellerphone{
+#seller_phone_div{
 	grid-area: phone;
 }
 
-#sellernotes{
+#seller_notes_div{
 	grid-area: notes;
 }
 
