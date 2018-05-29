@@ -88,7 +88,16 @@ function check_card_name() {
               console.log($(this));
 							var expansion = $(this).data("expansion");
 							for (var i=0;i<data['results'].length;i++){
-								new_option = $("<option></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name']).data("group_id", data['results'][i]['groupId']);
+                if (data['results'][i]['abbreviation'] != null){
+                  char_code = char_code_dict[data['results'][i]['abbreviation'].toLowerCase()];
+                  if(char_code == undefined){
+                    char_code = "";
+                  } else {
+                    char_code = char_code.replace("\\", "&#x");
+                  }} else {
+                  char_code = "";
+                }
+								new_option = $("<option></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name'] + " " + char_code).data("group_id", data['results'][i]['groupId']);
                 expansion.append(new_option);
                 for (var j=0;j<standard_list.length;j++){
                   if (data['results'][i]['name'] == standard_list[j].name){
@@ -146,7 +155,7 @@ function price_pull(){
       "success":function(data, textStatus, jqXHR){
         //The Algorithm
 
-        var premium = 1;
+        var premium = 1.025;
         var base = 0;
         var market = 0;
         var avg_count = 0;
@@ -215,7 +224,7 @@ function price_pull(){
         var final_price = Math.ceil(base * premium * 100)/100;
         var condition = $(this).data("name").data("condition").val();
         var sku_id = $.grep(sku_dicts, function(sku){
-          return (sku['name'].includes(condition) && sku['language'] == "English" && sku['isFoil'] == foil;
+          return (sku['name'].includes(condition) && sku['language'] == "English" && sku['isFoil'] == foil);
         });
         if(sku_id.length > 0){
           //Save the pricing info at the time of purchase
@@ -257,6 +266,9 @@ function price_pull(){
           final_buy = final_price * 0.4;
         } else {
           final_buy = final_price * 0.5;
+        }
+        if ($("#paymentmethod").val() == "Store Credit"){
+          final_buy = final_buy * 1.125;
         }
         console.log(final_price);
         final_buy = Math.ceil(final_buy * 100)/100;
@@ -302,7 +314,7 @@ function create_line(){
 	var expansion_div = $("<div></div>").attr({'class':'roboitem', 'id':'expansion_container_'+index.toString()});
 	form_group.append(expansion_div);
 	var expansion_label = $("<label></label>").attr({'for':'expansion_'+index.toString()}).html("Expansion:");
-	var expansion = $("<select></select>").attr({'name':'expansion_'+index.toString(), 'id':'expansion_'+index.toString()});
+	var expansion = $("<select></select>").attr({'name':'expansion_'+index.toString(), 'id':'expansion_'+index.toString(), 'class':'ss'});
 	var expansion_default_option = $("<option></option>").attr({'value':0, 'selected':true}).html("None");
 	card_name.data("expansion", expansion);
   expansion.data("name", card_name);
@@ -319,7 +331,7 @@ function create_line(){
 	var condition_label = $("<label></label>").attr({'for':'condition_'+index.toString()}).html("Condition:");
 	var condition = $("<select></select>").attr({'name':'condition_'+index.toString(), 'id':'condition_'+index.toString()});
 	condition.append($("<option></option>").val("Near Mint").html("NM"));
-	condition.append($("<option></option>").val("Lightly Played").html("LP"));
+	condition.append($("<option selected></option>").val("Lightly Played").html("LP"));
 	condition.append($("<option></option>").val("Moderately Played").html("MP"));
 	condition.append($("<option></option>").val("Heavily Played").html("HP"));
 	condition.append($("<option></option>").val("Damaged").html("DAM"));
@@ -373,12 +385,29 @@ function create_line(){
   expansion.data("market_price", market_price);
   condition.data("market_price", market_price);
   foil.data("market_price", market_price);
+  expansion.data("condition", condition);
+  foil.data("condition", condition);
+  condition.data("condition", condition);
 
 	index++;
+}
+
+function  adjust_payment_method(){
+  if ($("#paymentmethod").val() == "Cash"){
+    $(".buyitem").each(function(){
+      $(this).val(Math.round($(this).val()/1.125*100)/100);
+    })
+  } else {
+    $(".buyitem").each(function(){
+  		$(this).val(Math.round($(this).val()*1.125*100)/100);
+    })
+  }
+  sumbuyprice();
 }
 
 $(document).ready(function(){
 	create_line();
 	$("#addbtn").click(create_line);
 	$("#seller_name").change(back_check_seller);
+  $("#paymentmethod").change(adjust_payment_method);
 })

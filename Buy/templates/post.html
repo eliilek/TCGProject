@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>RoboKlein Post</title>
+    <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    {{ message }}
+
+    <a href="{% url 'buy' %}" class="btn btn-primary">Purchase and List</button>
+  </body>
+</html>

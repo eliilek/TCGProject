@@ -4,6 +4,7 @@
     {% load static %}
     <meta charset="UTF-8">
     <title>RoboKlein</title>
+    <link href="{% static 'Buy/keyrune.css' %}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script
@@ -24,7 +25,7 @@
   			<label for="seller_phone">Seller Phone:<input class="sellerinfoitem sellerinfoitem-sm" type="Phone" name="seller_phone" id="seller_phone"></label>
   		</div>
   		<div id="seller_notes_div" class="sellerinfodiv">
-  			<label for="seller_notes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="seller_notes"></textarea></label>
+  			<label for="seller_notes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="seller_notes" id="seller_notes"></textarea></label>
   		</div>
   	</div>
 
@@ -40,11 +41,25 @@
     	<label>Total Buy Price: $
         <input class="totalbuyitem" type="number" name="totalbuyprice" step=".01" min="0" placeholder="0">
         </label>
+      <label>Payment method:
+        <select name="paymentmethod" id="paymentmethod" form="roboform">
+          <option value="Cash">
+            Cash
+          </option>
+          <option value="Store Credit">
+            Store Credit
+          </option>
+        </select>
+        </label>
     </div>
 
     <button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
 
     <script>
+      var char_code_dict;
+      $.getJSON( "{% static 'Buy/result.json' %}", function( data ) {
+        char_code_dict = data; //json output
+      });
       var bearer = "{{ bearer }}";
       console.log("{{standard_list}}");
       var standard_list = "{{standard_list}}".replace(/&#39;/g,"\"");
@@ -55,15 +70,15 @@
         $.get("{% url 'check_seller' %}", {'name':seller_name}, success_function);
       }
       function robosubmit(){
-        if ($("#sellername").val() == ""){
+        if ($("#seller_name").val() == ""){
           alert("Seller name required");
           return false;
         }
-        if ($("#sellerphone").val() == ""){
+        if ($("#seller_phone").val() == ""){
           alert("Seller phone required");
           return false;
         }
-        if ($("#selleremail").val() == ""){
+        if ($("#seller_email").val() == ""){
           alert("Seller email required");
           return false;
         }
