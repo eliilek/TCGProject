@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   </head>
   <body>
-    {{ message }}
+    {{ message |safe}}
 
-    <a href="{% url 'buy' %}" class="btn btn-primary">Purchase and List</button>
+    <a href="{% url 'buy' %}" class="btn btn-primary">Return</button>
   </body>
 </html>

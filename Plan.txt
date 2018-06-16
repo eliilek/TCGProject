@@ -1,22 +1,19 @@
 Things to do:
-  Update Algorithm
-    Deeper cut or actual price check for HP/DAM
-    Small cut across the board
-    Deeper cut on Foils
-    Investigate using lower of NM/LP instead of average - esp older cards
-      Maybe use average for Standard, lower for older?
-    Cut 5% from buy price to cover this nonsense
+
+  Symbol Font
+    For old sets, remove symbol, put "White Border" or "Call Eli"
+
+  Buy Screen
+    Check for special card
 
   Host on Heroku
 
   Write price adjustment
-    Determine floor price, speed of drop, parameters for full recalculation of price
-    Talk to Mack
+    Track which card names have already been updated
+      Track in memory, update all at once at end
+    Add a % for NM?
 
   Schedule order pulling so we have some real sales price data
-    Maybe write a one-time setup script?
-      For each card in roboklein, check inventory, mark inactive if it's gone
-      Otherwise, leave it alone, then start running the hourly scheduler
     Add price checking/adjustment to hourly script
 
   Index screen
@@ -43,3 +40,7 @@ Things to do:
 
   Reporting
     Talk to Rob about needed reports
+
+  List Screen
+    Similar to Buy Screen, no buy price
+    Display Sell/Listing price, remove auto-list option

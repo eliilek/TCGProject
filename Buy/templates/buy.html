@@ -69,6 +69,9 @@
       function check_seller(seller_name, success_function){
         $.get("{% url 'check_seller' %}", {'name':seller_name}, success_function);
       }
+      function check_price(card_obj, success_function){
+        $.get("{% url 'query_price' %}", card_obj, success_function)
+      }
       function robosubmit(){
         if ($("#seller_name").val() == ""){
           alert("Seller name required");
@@ -83,6 +86,17 @@
           return false;
         }
       	if (confirm("Purchase?")){
+          var zeros = false;
+          $(".roboquantity").each(function(){
+            if ($(this).val() == 0){
+              zeros = true;
+            }
+        	});
+          if (zeros){
+            if (!confirm("Items have 0 quantity - proceed?")){
+              return false;
+            }
+          }
       		$("#sellerinfo").appendTo($("#roboform"));
       		if(seller_id){
       			$("#roboform").append('<input type="hidden" name="seller_id" value=' + seller_id.toString() + ' />')

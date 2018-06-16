@@ -1,4 +1,4 @@
-var seller_id;
+var seller_id = null;
 var index = 0;
 var group_id_table = {};
 
@@ -97,7 +97,11 @@ function check_card_name() {
                   }} else {
                   char_code = "";
                 }
-								new_option = $("<option></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name'] + " " + char_code).data("group_id", data['results'][i]['groupId']);
+                if (data['results'].length == 1){
+                  new_option = $("<option selected></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name'] + " " + char_code).data("group_id", data['results'][i]['groupId']);
+                } else {
+                  new_option = $("<option></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name'] + " " + char_code).data("group_id", data['results'][i]['groupId']);
+                }
                 expansion.append(new_option);
                 for (var j=0;j<standard_list.length;j++){
                   if (data['results'][i]['name'] == standard_list[j].name){
@@ -124,7 +128,15 @@ function check_card_name() {
               $(this).data("trash_button").prop("disabled", false);
               alert("Request failed");
 						}
-					}
+					},
+          "error":function(data, textStatus, jqXHR){
+            $("#submitbtn").prop("disabled", false);
+            $(this).data("expansion").prop("disabled", false);
+            $(this).data("condition").prop("disabled", false);
+            $(this).data("foil").prop("disabled", false);
+            $(this).data("trash_button").prop("disabled", false);
+            alert("Request failed - is the card name correct?");
+          }
 				})
 			} else {
         //reenable disabled fields
@@ -133,9 +145,17 @@ function check_card_name() {
         $(this).data("condition").prop("disabled", false);
         $(this).data("foil").prop("disabled", false);
         $(this).data("trash_button").prop("disabled", false);
-        alert("Request failed");
+        alert("Request failed - is the card name correct?");
 			}
-		}
+		},
+    "error":function(data, textStatus, jqXHR){
+      $("#submitbtn").prop("disabled", false);
+      $(this).data("expansion").prop("disabled", false);
+      $(this).data("condition").prop("disabled", false);
+      $(this).data("foil").prop("disabled", false);
+      $(this).data("trash_button").prop("disabled", false);
+      alert("Request failed");
+    }
 	});
 	console.log("Requested");
 }
@@ -147,143 +167,76 @@ function price_pull(){
   var sku_id = $.grep(sku_dicts, function(sku){
     return (sku['name'].includes("Near Mint") || sku['name'].includes("Lightly Played")) && sku['language'] == "English" && sku['isFoil'] == foil;
   });
-  if (sku_id.length > 0){
+  var condition = $(this).data("name").data("condition").val();
+  var card_id = $.grep(sku_dicts, function(sku){
+    return (sku['name'].includes(condition) && sku['language'] == "English" && sku['isFoil'] == foil);
+  });
+  if (sku_id.length > 0 && card_id.length > 0){
+    $(this).data("tcgplayer_card_id").val(card_id[0]['productConditionId']);
     $.ajax({
       "headers":{"Authorization": "bearer " + bearer},
-		  "url":"http://api.tcgplayer.com/pricing/sku/" + sku_id[0]['productConditionId'].toString() + "," + sku_id[1]['productConditionId'].toString(),
+      "url":"http://api.tcgplayer.com/pricing/sku/" + card_id[0]['productConditionId'].toString(),
       "context":this,
       "success":function(data, textStatus, jqXHR){
-        //The Algorithm
-
-        var premium = 1.025;
-        var base = 0;
-        var market = 0;
-        var avg_count = 0;
-        console.log(data);
-        if (data['results'][0]['directLowPrice']){
-          base += data['results'][0]['directLowPrice'];
-          avg_count += 1;
-        } else if (data['results'][0]['lowestListingPrice']){
-          base += data['results'][0]['lowestListingPrice'];
-          avg_count += 1;
-        }
-        if (data['results'][1]['directLowPrice']){
-          base += data['results'][1]['directLowPrice'];
-          avg_count += 1;
-        } else if (data['results'][1]['lowestListingPrice']){
-          base += data['results'][1]['lowestListingPrice'];
-          avg_count += 1;
-        }
-        if (avg_count > 0){
-          base = base / avg_count;
-          avg_count = 0;
-        }
-        if (base == 0){
-          alert("Cannot auto-price");
-          return 0;
-        }
-        //Check if standard
-        if ($(this).data('name').data('standard') == false){
-          premium += 0.1;
-          console.log("Not Standard");
-        }
-        if (data['results'][0]['marketPrice']){
-          market += data['results'][0]['marketPrice'];
-          avg_count += 1;
-        }
-        if (data['results'][1]['marketPrice']){
-          market += data['results'][1]['marketPrice'];
-          avg_count += 1;
-        }
-        if (avg_count > 0){
-          market = market / avg_count;
-          avg_count = 0;
-        }
-        //High Velocity
-        if (market >= base * 1.1){
-          premium += .05;
-        //Low Velocity
-        } else if (market <= base * 0.9){
-          premium -= .05;
-        }
-        //Foil change
-        if (foil){
-          premium -= .075;
-        }
-        //Condition check
-        if ($(this).data('condition').val() == "Moderately Played"){
-          base = base * 0.9;
-        } else if ($(this).data('condition').val() == "Heavily Played"){
-          base = base * 0.8;
-        } else if ($(this).data('condition').val() == "Damaged"){
-          base = base * 0.6;
-        }
-
-        //TODO investigate adding 10% to premium if base between $2 and $5, adding more or locking to steps below $2
-        //Cut to 40% if base is under $2, 30% if base is under $1, flag as bulk below $0.5
-        var final_price = Math.ceil(base * premium * 100)/100;
-        var condition = $(this).data("name").data("condition").val();
-        var sku_id = $.grep(sku_dicts, function(sku){
-          return (sku['name'].includes(condition) && sku['language'] == "English" && sku['isFoil'] == foil);
-        });
-        if(sku_id.length > 0){
-          //Save the pricing info at the time of purchase
-          $(this).data("tcgplayer_card_id").val(sku_id[0]['productConditionId']);
-          $.ajax({
-            "headers":{"Authorization": "bearer " + bearer},
-      		  "url":"http://api.tcgplayer.com/pricing/sku/" + sku_id[0]['productConditionId'].toString(),
-            "context":this,
-            "success":function(data, textStatus, jqXHR){
-              if(data['results'][0]['marketPrice'] != null){
-                $(this).data("market_price").val(data['results'][0]['marketPrice']);
-              } else {
-                $(this).data("market_price").val(0);
-              }
-              if(data['results'][0]['directLowPrice'] != null){
-                $(this).data("lowest_direct").val(data['results'][0]['directLowPrice']);
-              } else {
-                $(this).data("lowest_direct").val(0);
-              }
-              if(data['results'][0]['lowestListingPrice'] != null){
-                $(this).data("lowest_listing").val(data['results'][0]['lowestListingPrice']);
-              } else {
-                $(this).data("lowest_listing").val(0);
-              }
-            }
-          })
-        }
-
-        var final_buy = 0;
-        if (final_price < 0.5){
-          alert("Bulk - tell customer");
-          final_buy = 0;
-          if (final_price < 0.25){
-            final_price = 0.25;
-          }
-        } else if (final_price < 1){
-          final_buy = final_price * 0.3;
-        } else if (final_price < 2){
-          final_buy = final_price * 0.4;
+        if(data['results'][0]['marketPrice'] != null){
+          $(this).data("market_price").val(data['results'][0]['marketPrice']);
         } else {
-          final_buy = final_price * 0.5;
+          $(this).data("market_price").val(0);
         }
-        if ($("#paymentmethod").val() == "Store Credit"){
-          final_buy = final_buy * 1.125;
+        if(data['results'][0]['directLowPrice'] != null){
+          $(this).data("lowest_direct").val(data['results'][0]['directLowPrice']);
+        } else {
+          $(this).data("lowest_direct").val(0);
         }
-        console.log(final_price);
-        final_buy = Math.ceil(final_buy * 100)/100;
-        $(this).data('price').val(final_buy).trigger("change");
-        $(this).data("sell_price").val(final_price);
-      },
-      "error":function(data, textStatus, jqXHR){
-        console.log("Error");
-        console.log(data);
+        if(data['results'][0]['lowestListingPrice'] != null){
+          $(this).data("lowest_listing").val(data['results'][0]['lowestListingPrice']);
+        } else {
+          $(this).data("lowest_listing").val(0);
+        }
       }
     });
+    $(this).data('name').data('tcgplayer_nm_id').val(sku_id[0]['productConditionId'].toString());
+    $(this).data('name').data('tcgplayer_lp_id').val(sku_id[1]['productConditionId'].toString());
+    card = {'name':$(this).data('name').val(), 'NM_id':sku_id[0]['productConditionId'].toString(), 'LP_id':sku_id[1]['productConditionId'].toString(), 'card_id':card_id[0]['productConditionId'], 'context':$(this).attr('id')};
+    check_price(card, process_price);
   } else {
     alert("No SKUs found - is foil incorrect?");
   }
 }
+
+  function process_price(data){
+    if (data['error']){
+      console.log(data['error']);
+    } else {
+      var final_price = data['price'];
+      var final_buy = 0;
+      if ($("#seller_name").val() == "Eli Klein"){
+        final_buy = 0;
+        if (final_price < 0.20){
+          final_price = 0.20;
+        }
+      } else if (final_price < 0.5){
+        alert("Bulk - tell customer");
+        final_buy = 0;
+        if (final_price < 0.20){
+          final_price = 0.20;
+        }
+      } else if (final_price < 1){
+        final_buy = final_price * 0.25;
+      } else if (final_price < 2){
+        final_buy = final_price * 0.35;
+      } else {
+        final_buy = final_price * 0.475;
+      }
+      if ($("#paymentmethod").val() == "Store Credit"){
+        final_buy = final_buy * 1.125;
+      }
+      console.log(final_price);
+      final_buy = Math.ceil(final_buy * 100)/100;
+      $("#" + data['context']).data('price').val(final_buy).trigger("change");
+      $("#" + data['context']).data("sell_price").val(final_price);
+    }
+  }
 
 function process_seller_response(data){
 	if(data['found']){
@@ -323,7 +276,7 @@ function create_line(){
 	var quantity_div = $("<div></div>").attr({'class':'roboitem', 'id':'quantity_container_'+index.toString()});
 	form_group.append(quantity_div);
 	var quantity_label = $("<label></label>").attr({'for':'quantity_'+index.toString()}).html("Quantity:");
-	var quantity = $("<input></input>").attr({'name':'quantity_'+index.toString(), 'id':'quantity_'+index.toString(), 'type':'number', 'value':0});
+	var quantity = $("<input></input>").attr({'class':'roboquantity', 'name':'quantity_'+index.toString(), 'id':'quantity_'+index.toString(), 'type':'number', 'value':0});
 	quantity.change(sumbuyprice);
 	quantity_div.append(quantity_label, quantity);
 	var condition_div = $("<div></div>").attr({'class':'roboitem', 'id':'condition_container_'+index.toString()});
@@ -388,6 +341,12 @@ function create_line(){
   expansion.data("condition", condition);
   foil.data("condition", condition);
   condition.data("condition", condition);
+  var tcgplayer_nm_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_nm_id'+index.toString(), 'id':'tcgplayer_nm_id'+index.toString()});
+  var tcgplayer_lp_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_lp_id'+index.toString(), 'id':'tcgplayer_lp_id'+index.toString()});
+  form_group.append(tcgplayer_nm_id);
+  form_group.append(tcgplayer_lp_id);
+  card_name.data("tcgplayer_nm_id", tcgplayer_nm_id);
+  card_name.data("tcgplayer_lp_id", tcgplayer_lp_id);
 
 	index++;
 }
