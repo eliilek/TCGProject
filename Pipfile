@@ -11,6 +11,7 @@ pytz = "*"
 django = "==2.0.3"
 requests = "*"
 python-dateutil = "*"
+dj-database-url = "*"
 
 
 [dev-packages]
