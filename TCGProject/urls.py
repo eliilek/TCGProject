@@ -21,3 +21,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^buy/', include('Buy.urls')),
 ]
+
+urlpatterns += [
+    url(r'accounts/', include('django.contrib.auth.urls')),
+]
