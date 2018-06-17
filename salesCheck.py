@@ -94,7 +94,7 @@ for card in remaining_cards:
         card.base_price = value['price']
         card.save()
 
-        delta = timezone.now() - card.bought_on
+        delta = timezone.now() - card.block.bought_on
         if delta.days <= 8:
             price = card.base_price * (1.1 - (delta.days * 0.0125))
         elif delta.days <= 15:
