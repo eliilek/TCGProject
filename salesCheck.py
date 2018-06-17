@@ -8,9 +8,10 @@ import requests
 import datetime
 from Buy.views import update_bearer, price_check
 from dateutil.parser import parse
+from django.utils import timezone
 
 if SalesCheckDateTime.objects.count() == 0:
-    dateTime = SalesCheckDateTime(last_check=datetime.datetime.now() - datetime.timedelta(days=1), last_sale_id="")
+    dateTime = SalesCheckDateTime(last_check=timezone.now() - datetime.timedelta(days=1), last_sale_id="")
     dateTime.save()
 else:
     dateTime = SalesCheckDateTime.objects.latest('last_check')
@@ -69,7 +70,7 @@ for item in orders:
                     if pricing == None:
                         pricing = requests.get("http://api.tcgplayer.com/pricing/sku/" + sku, headers={"Authorization":bearer})
                     card_sold = cards.earliest('block__bought_on')
-                    card_sold['sold_on'] = datetime.datetime.now()
+                    card_sold['sold_on'] = timezone.now()
                     card_sold['sell_price'] = r.json()['results'][item]['price']
                     if pricing.json()['success']:
                         card_sold['market_price_at_sell'] = pricing.json()['results'][0]['marketPrice']
@@ -91,7 +92,7 @@ for card in remaining_cards:
         card.base_price = value['price']
         card.save()
 
-        delta = datetime.datetime.today - card.bought_on
+        delta = timezone.now() - card.bought_on
         if delta.days <= 8:
             price = card.base_price * (1.1 - (delta.days * 0.0125))
         elif delta.days <= 15:
