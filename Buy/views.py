@@ -115,7 +115,7 @@ def report_buy(request):
                     if (r.status_code == 200 and r.json()['success']):
                         old_quantity = int(r.json()['results'][0]['quantity'])
                     quantity = old_quantity + int(request.POST['quantity_'+str(index)])
-                    r = requests.put("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id, headers={'Authorization':bearer, 'Content-Type':'application/json'}, json={'price':single.initial_sell_price, 'quantity':quantity, 'channelId':0})
+                    r = requests.put("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id, headers={'Authorization':bearer, 'Content-Type':'application/json'}, json={'price':(single.initial_sell_price * 1.1 if single.initial_sell_price * 1.1 <= single.initial_sell_price + 5 else single.initial_sell_price + 5), 'quantity':quantity, 'channelId':0})
                     if (r.status_code != 200):
                         errors += single.name + " price/quantity not updated<br>"
                     else:
@@ -224,12 +224,15 @@ def price_check(card):
 
             card_cond = requests.get("http://api.tcgplayer.com/catalog/skus/" + str(card['tcgplayer_card_id']), headers={"Authorization":bearer})
             if card_cond.json()['success']:
-                if card_cond.json()['results'][0]['conditionId'] == 3:
+                elif card_cond.json()['results'][0]['conditionId'] == 3:
                     min_base = min_base * 0.95
                 elif card_cond.json()['results'][0]['conditionId'] == 4:
                     min_base = min_base * 0.75
                 elif card_cond.json()['results'][0]['conditionId'] == 5:
                     min_base = min_base * 0.55
+
+                if card_cond.json()['results'][0]['variantId'] == 2:
+                    premium = premium - 0.07
 
             final_price = ceil(min_base * premium * 100)/100.0
             if final_price > min_base + 5:

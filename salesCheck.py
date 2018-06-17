@@ -81,7 +81,7 @@ for item in orders:
                     card_sold.save()
 
 #Check if items have been listed too long, depreciate
-remaining_cards = SingleCardPurchase.objects.filter(sold_on=None).order_by("block__bought_on", "tcgplayer_card_id")
+remaining_cards = SingleCardPurchase.objects.filter(sold_on=None).order_by("tcgplayer_card_id", "block__bought_on")
 previous_id = ""
 batch = []
 for card in remaining_cards:

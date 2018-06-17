@@ -5,14 +5,13 @@ Things to do:
 
   Buy Screen
     Check for special card
+    Auto-select isn't triggering calculation
+    
 
   Add login middleware
 
   Write price adjustment
-    Track which card names have already been updated
-      Track in memory, update all at once at end
     Add a % for NM?
-    Not accounting for foils
     If no NM or LP ID, search via name, save to model
 
   Schedule order pulling so we have some real sales price data
