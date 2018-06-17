@@ -13,6 +13,7 @@ requests = "*"
 python-dateutil = "*"
 dj-database-url = "*"
 django-heroku = "*"
+gunicorn = "*"
 
 
 [dev-packages]
