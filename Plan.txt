@@ -6,12 +6,14 @@ Things to do:
   Buy Screen
     Check for special card
 
-  Host on Heroku
+  Add login middleware
 
   Write price adjustment
     Track which card names have already been updated
       Track in memory, update all at once at end
     Add a % for NM?
+    Not accounting for foils
+    If no NM or LP ID, search via name, save to model
 
   Schedule order pulling so we have some real sales price data
     Add price checking/adjustment to hourly script

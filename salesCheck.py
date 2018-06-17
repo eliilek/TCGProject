@@ -83,7 +83,7 @@ for item in orders:
 #Check if items have been listed too long, depreciate
 remaining_cards = SingleCardPurchase.objects.filter(sold_on=None).order_by("block__bought_on", "tcgplayer_card_id")
 previous_id = ""
-batch = {}
+batch = []
 for card in remaining_cards:
     if card.tcgplayer_card_id != previous_id:
         previous_id = card.tcgplayer_card_id
@@ -111,6 +111,8 @@ for card in remaining_cards:
         if price < 0.2:
             price = 0.2
 
-        batch[card.tcgplayer_card_id] = price
+        batch.append({"skuId":card.tcgplayer_card_id, "price":price, "channelId":0})
 
-#TODO send the batch prices to api
+requests.post("http://api.tcgplayer.com/stores/" + store_key + "/inventory/skus/batch", headers={"Authorization":bearer}, json=batch)
+
+dateTime.delete()

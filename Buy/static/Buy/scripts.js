@@ -341,8 +341,8 @@ function create_line(){
   expansion.data("condition", condition);
   foil.data("condition", condition);
   condition.data("condition", condition);
-  var tcgplayer_nm_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_nm_id'+index.toString(), 'id':'tcgplayer_nm_id'+index.toString()});
-  var tcgplayer_lp_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_lp_id'+index.toString(), 'id':'tcgplayer_lp_id'+index.toString()});
+  var tcgplayer_nm_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_nm_id_'+index.toString(), 'id':'tcgplayer_nm_id'+index.toString()});
+  var tcgplayer_lp_id = $('<input></input>').attr({'type':'hidden', 'name':'tcgplayer_lp_id_'+index.toString(), 'id':'tcgplayer_lp_id'+index.toString()});
   form_group.append(tcgplayer_nm_id);
   form_group.append(tcgplayer_lp_id);
   card_name.data("tcgplayer_nm_id", tcgplayer_nm_id);
