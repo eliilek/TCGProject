@@ -98,6 +98,8 @@ def report_buy(request):
                         name = request.POST['card_name_'+str(index)],
                         expansion = request.POST['expansion_'+str(index)],
                         tcgplayer_card_id = request.POST['tcgplayer_card_id_'+str(index)],
+                        tcgplayer_NM_id = request.POST['tcgplayer_nm_id_'+str(index)],
+                        tcgplayer_LP_id = request.POST['tcgplayer_lp_id_'+str(index)],
                         buy_price = float(request.POST['price_'+str(index)]),
                         initial_sell_price = float(request.POST['sell_price_'+str(index)]),
                         base_price = float(request.POST['sell_price_'+str(index)]),
