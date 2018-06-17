@@ -8,7 +8,7 @@ import requests
 import datetime
 from Buy.views import update_bearer, price_check
 from dateutil.parser import parse
-from django.util import timezone
+from django.utils import timezone
 
 if SalesCheckDateTime.objects.count() == 0:
     dateTime = SalesCheckDateTime(last_check=timezone.now() - datetime.timedelta(days=1), last_sale_id="")
