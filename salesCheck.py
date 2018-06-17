@@ -8,13 +8,14 @@ import requests
 import datetime
 from Buy.views import update_bearer, price_check
 from dateutil.parser import parse
+from django.util import timezone
 
 if SalesCheckDateTime.objects.count() == 0:
-    dateTime = SalesCheckDateTime(last_check=datetime.datetime.now() - datetime.timedelta(days=1), last_sale_id="")
+    dateTime = SalesCheckDateTime(last_check=timezone.now() - datetime.timedelta(days=1), last_sale_id="")
     dateTime.save()
 else:
     dateTime = SalesCheckDateTime.objects.latest('last_check')
-    nextDT = SalesCheckDateTime(last_check=datetime.datetime.now())
+    nextDT = SalesCheckDateTime(last_check=timezone.now())
     nextDT.save()
 
 bearer = "bearer " + update_bearer().bearer
@@ -29,7 +30,7 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
     while (another):
         for order_id in r.json()['results']:
             spec = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + order_id, headers={"Authorization":bearer})
-            if (spec.json()['success'] and parse(spec.json()['results'][0]['orderedOn'], default=datetime.datetime.now()) >= dateTime.last_check):
+            if (spec.json()['success'] and parse(spec.json()['results'][0]['orderedOn'], default=timezone.now()) >= dateTime.last_check):
                 orders.append(spec.json()['results'][0]['orderNumber'])
             else:
                 another=False
@@ -71,7 +72,7 @@ for item in orders:
                     if pricing == None:
                         pricing = requests.get("http://api.tcgplayer.com/pricing/sku/" + sku, headers={"Authorization":bearer})
                     card_sold = cards.earliest('block__bought_on')
-                    card_sold['sold_on'] = datetime.datetime.now()
+                    card_sold['sold_on'] = timezone.now()
                     card_sold['sell_price'] = r.json()['results'][item]['price']
                     if pricing.json()['success']:
                         card_sold['market_price_at_sell'] = pricing.json()['results'][0]['marketPrice']
