@@ -224,7 +224,7 @@ def price_check(card):
 
             card_cond = requests.get("http://api.tcgplayer.com/catalog/skus/" + str(card['tcgplayer_card_id']), headers={"Authorization":bearer})
             if card_cond.json()['success']:
-                elif card_cond.json()['results'][0]['conditionId'] == 3:
+                if card_cond.json()['results'][0]['conditionId'] == 3:
                     min_base = min_base * 0.95
                 elif card_cond.json()['results'][0]['conditionId'] == 4:
                     min_base = min_base * 0.75
