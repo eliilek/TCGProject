@@ -12,6 +12,7 @@ django = "==2.0.3"
 requests = "*"
 python-dateutil = "*"
 dj-database-url = "*"
+django-heroku = "*"
 
 
 [dev-packages]
