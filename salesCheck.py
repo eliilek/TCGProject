@@ -19,7 +19,7 @@ else:
 bearer = "bearer " + update_bearer().bearer
 store_key = os.environ['store_key']
 
-r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, data={"sort":"OrderDate Desc"})
+r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc"})
 #Keep pulling orders until we find one too early
 if (r.json()['success'] and dateTime.last_sale_id == ""):
     another=True
