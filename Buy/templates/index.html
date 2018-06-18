@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Roboklein Index</title>
+    <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  </head>
+  <body>
+    <a href="{% url 'buy' %}" class="btn btn-primary">Buy Cards</a><br>
+    <a href="{% url 'sell' %}" class="btn btn-primary">Sell Cards</a><br>
+    <a href="{% url 'trade' %}" class="btn btn-primary">Trade Cards</a><br>
+  </body>
+</html>

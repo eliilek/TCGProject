@@ -1,6 +1,6 @@
 from django.shortcuts import HttpResponseRedirect
 from django.conf import settings
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from re import compile
 
 EXEMPT_URLS = [compile(settings.LOGIN_URL.lstrip('/'))]
@@ -13,7 +13,7 @@ class AuthRequiredMiddleware(object):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
         response = self.get_response(request)
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticated:
             path = request.path_info.lstrip('/')
             if not any(m.match(path) for m in EXEMPT_URLS):
                 return HttpResponseRedirect(reverse('login'))

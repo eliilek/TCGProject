@@ -42,6 +42,9 @@ def sell(request):
     return render(request, 'sell.html', {'bearer':bearer_token.bearer})
 
 def trade(request):
+    return HttpResponse("Oops! This isn't implemented yet.")
+
+def trade(request):
     bearer_token = update_bearer()
     return render(request, 'trade.html', {'bearer':bearer_token.bearer})
 
