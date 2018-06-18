@@ -21,10 +21,12 @@ store_key = os.environ['store_key']
 
 r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc"})
 #Keep pulling orders until we find one too early
+last_id = None
 if (r.json()['success'] and dateTime.last_sale_id == ""):
     another=True
     orders=[]
     offset=10
+    last_id = r.json()['results'][0]
     while (another):
         print(r.text)
         for order_id in r.json()['results']:
@@ -45,9 +47,10 @@ elif (r.json()['success']):
     another=True
     orders=[]
     offset=10
+    last_id = r.json()['results'][0]
     while (another):
         for order_id in r.json()['results']:
-            if (r.json()['results'][order_id] == dateTime.last_sale_id):
+            if (order_id == dateTime.last_sale_id):
                 another=False
                 break
             else:
@@ -119,5 +122,8 @@ for card in remaining_cards:
 requests.post("http://api.tcgplayer.com/stores/" + store_key + "/inventory/skus/batch", headers={"Authorization":bearer}, json=batch)
 
 dateTime.delete()
-nextDT = SalesCheckDateTime(last_check=timezone.now())
+if last_id:
+    nextDT = SalesCheckDateTime(last_check=timezone.now(), last_sale_id=last_id)
+else:
+    nextDT = SalesCheckDateTime(last_check=timezone.now())
 nextDT.save()
