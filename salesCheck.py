@@ -73,12 +73,12 @@ for item in orders:
                     if pricing == None:
                         pricing = requests.get("http://api.tcgplayer.com/pricing/sku/" + str(sku), headers={"Authorization":bearer})
                     card_sold = cards.earliest('block__bought_on')
-                    card_sold['sold_on'] = timezone.now()
-                    card_sold['sell_price'] = r.json()['results'][item]['price']
+                    card_sold.sold_on = timezone.now()
+                    card_sold.sell_price = item['price']
                     if pricing.json()['success']:
-                        card_sold['market_price_at_sell'] = pricing.json()['results'][0]['marketPrice']
-                        card_sold['lowest_listing_at_sell'] = pricing.json()['results'][0]['directLowPrice']
-                        card_sold['lowest_direct_at_sell'] = pricing.json()['results'][0]['lowestListingPrice']
+                        card_sold.market_price_at_sell = pricing.json()['results'][0]['marketPrice']
+                        card_sold.lowest_listing_at_sell = pricing.json()['results'][0]['directLowPrice']
+                        card_sold.lowest_direct_at_sell = pricing.json()['results'][0]['lowestListingPrice']
                     card_sold.save()
 
 #Check if items have been listed too long, depreciate
