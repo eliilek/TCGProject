@@ -163,7 +163,6 @@ def price_check(card):
             direct_low = 0
             low = 0
             #TODO make the algorithm happen
-            print(r.json())
             if r.json()['results'][0]['directLowPrice'] and r.json()['results'][1]['directLowPrice']:
                 if standard:
                     direct_low = (r.json()['results'][0]['directLowPrice'] + r.json()['results'][1]['directLowPrice'])/2

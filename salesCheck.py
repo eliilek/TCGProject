@@ -15,7 +15,6 @@ if SalesCheckDateTime.objects.count() == 0:
     dateTime.save()
 else:
     dateTime = SalesCheckDateTime.objects.latest('last_check')
-    nextDT = SalesCheckDateTime(last_check=timezone.now())
 
 bearer = "bearer " + update_bearer().bearer
 store_key = os.environ['store_key']
@@ -27,8 +26,10 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
     orders=[]
     offset=10
     while (another):
+        print(r.text)
         for order_id in r.json()['results']:
             spec = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + order_id, headers={"Authorization":bearer})
+            print(spec.text)
             if (spec.json()['success'] and parse(spec.json()['results'][0]['orderedOn'], default=timezone.now()) >= dateTime.last_check):
                 orders.append(spec.json()['results'][0]['orderNumber'])
             else:
@@ -69,6 +70,7 @@ for item in orders:
             pricing = None
             for i in range(item['quantity']):
                 cards = SingleCardPurchase.objects.filter(tcgplayer_card_id=sku, sold_on=None)
+                print(cards)
                 if len(cards) > 0:
                     if pricing == None:
                         pricing = requests.get("http://api.tcgplayer.com/pricing/sku/" + str(sku), headers={"Authorization":bearer})
@@ -117,4 +119,5 @@ for card in remaining_cards:
 requests.post("http://api.tcgplayer.com/stores/" + store_key + "/inventory/skus/batch", headers={"Authorization":bearer}, json=batch)
 
 dateTime.delete()
+nextDT = SalesCheckDateTime(last_check=timezone.now())
 nextDT.save()
