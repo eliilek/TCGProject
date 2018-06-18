@@ -65,9 +65,9 @@ for item in orders:
     if (r.json()['success']):
         for item in r.json()['results']:
             #For each quantity, check if we have one of that SKUID in database
-            sku = r.json()['results'][item]['skuId']
+            sku = item['skuId']
             pricing = None
-            for i in range(r.json()['results'][item]['quantity']):
+            for i in range(item['quantity']):
                 cards = SingleCardPurchase.objects.filter(tcgplayer_card_id=sku, sold_on=None)
                 if len(cards) > 0:
                     if pricing == None:
