@@ -61,7 +61,7 @@ elif (r.json()['success']):
 for item in orders:
     print(item)
     r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + item + "/items", headers={"Authorization":bearer})
-    print(r.text())
+    print(r.text)
     if (r.json()['success']):
         for item in r.json()['results']:
             #For each quantity, check if we have one of that SKUID in database
