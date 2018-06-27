@@ -28,18 +28,12 @@ def index(request):
 def buy(request):
     #Ensure TCGPlayer bearer token is valid
     bearer_token = update_bearer()
-    standard_list = []
-    special_list = []
-    for standard_set in StandardSet.objects.all():
-        standard_list.append({'name':standard_set.name, 'abbreviation':standard_set.abbreviation})
-    for special_card in SpecialCard.objects.all():
-        special_list.append({'name':special_card.name, 'percent':special_card.percent_modifier, 'list':special_card.list_for_sale})
-    return render(request, 'buy.html', {'bearer':bearer_token.bearer, 'standard_list':standard_list, 'special_list':special_list})
+    return render(request, 'buy.html', {'bearer':bearer_token.bearer})
 
 def sell(request):
     #Ensure TCGPlayer bearer token is valid
     bearer_token = update_bearer()
-    return render(request, 'sell.html', {'bearer':bearer_token.bearer})
+    return render(request, 'sell.html', {'bearer':bearer_token.bearer, 'store_key':os.environ['store_key']})
 
 def trade(request):
     return HttpResponse("Oops! This isn't implemented yet.")
@@ -135,6 +129,76 @@ def report_buy(request):
         errors += "<br>Give " + seller.name + " $" + str(total_buy) + " Cash"
 
     return render(request, 'post.html', {'message':errors})
+
+def report_sell(request):
+    if request.method != "POST":
+        return redirect("/")
+    print(request.POST)
+    if 'buyer_id' in request.POST.keys():
+        buyer = Seller.objects.get(pk=request.POST['buyer_id'])
+    else:
+        buyer = Seller(
+            name = request.POST['buyer_name'],
+            email = request.POST['buyer_email'],
+            phone = request.POST['buyer_phone']
+        )
+        buyer.save()
+    if 'buyer_notes' in request.POST.keys() and request.POST['buyer_notes'] != "":
+        buyer.notes = request.POST['buyer_notes']
+        buyer.save()
+
+    bearer = "bearer " + update_bearer().bearer
+
+    errors = ""
+    total_price = 0
+    for key in request.POST.keys():
+        match = re.match(r'card_name_(\d+)', key)
+        if match:
+            index = match.group(1)
+            if (request.POST['card_name_'+str(index)] != "") and (int(request.POST['quantity_'+str(index)]) > 0):
+                r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+request.POST['tcgplayer_card_id_'+str(index)]+"/quantity", headers={"Authorization":bearer})
+                try:
+                    print(r.json())
+                    inStock = r.json()['results'][0]['quantity']
+                    if inStock < int(request.POST['quantity_'+str(index)]):
+                        new_quantity = 0
+                        errors += "Only have " + inStock + " " + request.POST['card_name_'+str(index)] + " available to sell<br>"
+                        total_price += inStock * float(request.POST['price_'+str(index)])
+                    else:
+                        new_quantity = inStock - int(request.POST['quantity_'+str(index)])
+                        errors += "Sold " + request.POST['quantity_'+str(index)] + " " + request.POST['card_name_'+str(index)] + "<br>"
+                        total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
+                    update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
+                    print(update.text)
+                    singles = SingleCardPurchase.objects.filter(tcgplayer_card_id=int(request.POST['tcgplayer_card_id_'+str(index)]), sold_on=None)
+                    print("Test")
+                    spec = requests.get("http://api.tcgplayer.com/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
+                    print(spec.text)
+                    for i in range(min(inStock, int(request.POST['quantity_'+str(index)]))):
+                        if len(singles) > i:
+                            singles[i].sold_on = datetime.datetime.today()
+                            singles[i].sell_price = float(request.POST['price_'+str(index)])
+                            if spec.json()['success']:
+                                if spec.json()['results'][0]['marketPrice'] != None:
+                                    singles[i].market_price_at_sell = spec.json()['results'][0]['marketPrice']
+                                else:
+                                    singles[i].market_price_at_sell = 0
+                                if spec.json()['results'][0]['directLowPrice'] != None:
+                                    singles[i].lowest_direct_at_sell = spec.json()['results'][0]['directLowPrice']
+                                else:
+                                    singles[i].lowest_direct_at_sell = 0
+                                if spec.json()['results'][0]['lowestListingPrice'] != None:
+                                    singles[i].lowest_listing_at_sell = spec.json()['results'][0]['lowestListingPrice']
+                                else:
+                                    singles[i].lowest_listing_at_sell = 0
+                            singles[i].save()
+                except:
+                    errors += request.POST['card_name_'+str(index)] + " not sold<br>"
+
+    errors += "<br>Collect " + str(total_price) + " in " + request.POST['paymentmethod']
+
+    return render(request, 'post.html', {'message':errors})
+
 
 def price_check(card):
     context = ""

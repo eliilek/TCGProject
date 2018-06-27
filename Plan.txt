@@ -2,20 +2,12 @@ Things to do:
 
   Symbol Font
     For old sets, remove symbol, put "White Border" or "Call Eli"
-
-  Buy Screen
-    Check for special card
-    Auto-select isn't triggering calculation
-    
-
-  Add login middleware
+    Symbols aren't showing up in options on firefox
 
   Write price adjustment
     Add a % for NM?
+    Check for special card
     If no NM or LP ID, search via name, save to model
-
-  Schedule order pulling so we have some real sales price data
-    Add price checking/adjustment to hourly script
 
   Index screen
     Simple buttons, link to Buy or Sell

@@ -62,8 +62,6 @@ function check_card_name() {
   $(this).data("foil").prop("disabled", true);
   $(this).data("trash_button").prop("disabled", true);
 
-  $(this).data("standard", false);
-
 	$.ajax({
 		"headers":{"Authorization": "bearer " + bearer},
 		"url":"http://api.tcgplayer.com/catalog/products",
@@ -88,12 +86,12 @@ function check_card_name() {
               console.log($(this));
 							var expansion = $(this).data("expansion");
 							for (var i=0;i<data['results'].length;i++){
-                if (data['results'][i]['abbreviation'] != null){
-                  char_code = char_code_dict[data['results'][i]['abbreviation'].toLowerCase()];
+                if (data['results'][i]['name'] != null){
+                  char_code = char_code_dict[data['results'][i]['name']];
                   if(char_code == undefined){
                     char_code = "";
                   } else {
-                    char_code = char_code.replace("\\", "&#x");
+                    char_code = char_code['char_code'].replace("\\", "&#x");
                   }} else {
                   char_code = "";
                 }
@@ -103,10 +101,9 @@ function check_card_name() {
                   new_option = $("<option></option>").attr({'value':data['results'][i]['name']}).html(data['results'][i]['name'] + " " + char_code).data("group_id", data['results'][i]['groupId']);
                 }
                 expansion.append(new_option);
-                for (var j=0;j<standard_list.length;j++){
-                  if (data['results'][i]['name'] == standard_list[j].name){
-                    $(this).data('standard', true);
-                  }
+                if (data['results'].length == 1){
+                  expansion.change(price_pull);
+                  expansion.trigger("change");
                 }
 							}
 							//reenable disabled fields

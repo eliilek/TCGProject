@@ -3,7 +3,7 @@
   <head>
     {% load static %}
     <meta charset="UTF-8">
-    <title>RoboKlein</title>
+    <title>RoboKlein Sell</title>
     <link href="{% static 'Buy/keyrune.css' %}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{% static 'Buy/styles.css' %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -14,32 +14,32 @@
   </head>
   <body>
 
-  	<div id="sellerinfo">
-  		<div id="seller_name_div" class="sellerinfodiv">
-  			<label for="seller_name">Seller Name:<input class="sellerinfoitem sellerinfoitem-sm" type="text" name="seller_name" id="seller_name"></label>
+  	<div id="buyer_info">
+  		<div id="buyer_name_div" class="buyerinfodiv">
+  			<label for="buyer_name">Buyer Name:<input class="buyerinfoitem buyerinfoitem-sm" type="text" name="buyer_name" id="buyer_name"></label>
   		</div>
-  		<div id="seller_email_div" class="sellerinfodiv">
-  			<label for="seller_email">Seller Email: <input class="sellerinfoitem sellerinfoitem-sm" type="Email" name="seller_email" id="seller_email"></label>
+  		<div id="buyer_email_div" class="buyerinfodiv">
+  			<label for="buyer_email">Buyer Email: <input class="buyerinfoitem buyerinfoitem-sm" type="Email" name="buyer_email" id="buyer_email"></label>
   		</div>
-  		<div id="seller_phone_div" class="sellerinfodiv">
-  			<label for="seller_phone">Seller Phone:<input class="sellerinfoitem sellerinfoitem-sm" type="Phone" name="seller_phone" id="seller_phone"></label>
+  		<div id="buyer_phone_div" class="buyerinfodiv">
+  			<label for="buyer_phone">Buyer Phone:<input class="buyerinfoitem buyerinfoitem-sm" type="Phone" name="buyer_phone" id="buyer_phone"></label>
   		</div>
-  		<div id="seller_notes_div" class="sellerinfodiv">
-  			<label for="seller_notes" id="sellernoteslabel">Seller Notes: <textarea class="sellerinfoitem sellerinfoitem-lg" cols="60" rows ="5" name="seller_notes" id="seller_notes"></textarea></label>
+  		<div id="buyer_notes_div" class="buyerinfodiv">
+  			<label for="buyer_notes" id="buyernoteslabel">Buyer Notes: <textarea class="buyerinfoitem buyerinfoitem-lg" cols="60" rows ="5" name="buyer_notes" id="buyer_notes"></textarea></label>
   		</div>
   	</div>
 
     <button class="btn btn-primary" id="addbtn">Add Line</button>
 
-    <form action="{% url 'report_buy' %}" method="POST" id="roboform" onsubmit="return robosubmit()">
+    <form action="{% url 'report_sell' %}" method="POST" id="roboform" onsubmit="return robosubmit()">
       {% csrf_token %}
       <div class="robocontainer form-group">
       </div>
     </form>
 
-    <div id="totalbuyprice">
-    	<label>Total Buy Price: $
-        <input class="totalbuyitem" type="number" name="totalbuyprice" step=".01" min="0" placeholder="0">
+    <div id="totalsellprice">
+    	<label>Total Sell Price: $
+        <input class="totalsellitem" type="number" name="totalsellprice" step=".01" min="0" placeholder="0">
         </label>
       <label>Payment method:
         <select name="paymentmethod" id="paymentmethod" form="roboform">
@@ -61,23 +61,24 @@
         char_code_dict = data; //json output
       });
       var bearer = "{{ bearer }}";
-      function check_seller(seller_name, success_function){
-        $.get("{% url 'check_seller' %}", {'name':seller_name}, success_function);
+      var store_key = "{{ store_key }}";
+      function check_buyer(buyer_name, success_function){
+        $.get("{% url 'check_seller' %}", {'name':buyer_name}, success_function);
       }
       function check_price(card_obj, success_function){
         $.get("{% url 'query_price' %}", card_obj, success_function)
       }
       function robosubmit(){
-        if ($("#seller_name").val() == ""){
-          alert("Seller name required");
+        if ($("#buyer_name").val() == ""){
+          alert("Buyer name required");
           return false;
         }
-        if ($("#seller_phone").val() == ""){
-          alert("Seller phone required");
+        if ($("#buyer_phone").val() == ""){
+          alert("Buyer phone required");
           return false;
         }
-        if ($("#seller_email").val() == ""){
-          alert("Seller email required");
+        if ($("#buyer_email").val() == ""){
+          alert("Buyer email required");
           return false;
         }
       	if (confirm("Purchase?")){
@@ -92,16 +93,16 @@
               return false;
             }
           }
-      		$("#sellerinfo").appendTo($("#roboform"));
-      		if(seller_id){
-      			$("#roboform").append('<input type="hidden" name="seller_id" value=' + seller_id.toString() + ' />')
+      		$("#buyerinfo").appendTo($("#roboform"));
+      		if(buyer_id){
+      			$("#roboform").append('<input type="hidden" name="buyer_id" value=' + buyer_id.toString() + ' />')
       		}
       		return true;
       	}
       	return false;
       }
     </script>
-    <script src="{% static 'Buy/buy_scripts.js' %}"></script>
+    <script src="{% static 'Buy/sell_scripts.js' %}"></script>
 
   </body>
 </html>
