@@ -38,7 +38,7 @@
     </form>
 
     <div id="totalsellprice">
-    	<label>Total Sell Price: $
+    	<label>Total Sell Price (includes tax): $
         <input class="totalsellitem" type="number" name="totalsellprice" step=".01" min="0" placeholder="0">
         </label>
       <label>Payment method:
@@ -76,14 +76,6 @@
           alert("Buyer name required");
           return false;
         }
-        if ($("#buyer_phone").val() == ""){
-          alert("Buyer phone required");
-          return false;
-        }
-        if ($("#buyer_email").val() == ""){
-          alert("Buyer email required");
-          return false;
-        }
       	if (confirm("Purchase?")){
           var zeros = false;
           $(".roboquantity").each(function(){
@@ -96,7 +88,7 @@
               return false;
             }
           }
-      		$("#buyerinfo").appendTo($("#roboform"));
+      		$("#buyer_info").appendTo($("#roboform"));
       		if(buyer_id){
       			$("#roboform").append('<input type="hidden" name="buyer_id" value=' + buyer_id.toString() + ' />')
       		}

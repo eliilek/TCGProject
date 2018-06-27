@@ -11,8 +11,8 @@ class Token(models.Model):
 
 class Seller(models.Model):
     name = models.CharField(max_length=100, unique=True)
-    email = models.CharField(max_length=100)
-    phone = models.CharField(max_length=20)
+    email = models.CharField(max_length=100, default="")
+    phone = models.CharField(max_length=20, default="")
     notes = models.CharField(max_length=500, default="")
 
     def __unicode__(self):

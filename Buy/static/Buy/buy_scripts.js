@@ -158,6 +158,7 @@ function check_card_name() {
 }
 
 function price_pull(){
+  try{
   var group_dict = group_id_table[$(this).data('name').val()];
   var sku_dicts = group_dict[$(this).data('name').data('expansion').children(':selected').data('group_id')];
   var foil = $(this).data('name').data('foil').prop('checked');
@@ -168,6 +169,9 @@ function price_pull(){
   var card_id = $.grep(sku_dicts, function(sku){
     return (sku['name'].includes(condition) && sku['language'] == "English" && sku['isFoil'] == foil);
   });
+} catch(err) {
+  alert(err.message);
+}
   if (sku_id.length > 0 && card_id.length > 0){
     $(this).data("tcgplayer_card_id").val(card_id[0]['productConditionId']);
     $.ajax({

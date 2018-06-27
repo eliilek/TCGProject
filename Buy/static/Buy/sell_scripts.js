@@ -202,7 +202,7 @@ function sumprice() {
 		quantity = parseFloat($(this).data("quantity").val());
 		total += price * quantity;
 	});
-	var rounded = Math.ceil(total * 100)/100;
+	var rounded = Math.ceil(total * 1.1 * 100)/100;
 	$(".totalsellitem").val(rounded);
 }
 
