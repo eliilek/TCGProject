@@ -44,13 +44,15 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
                 another=False
 #Keep pulling orders until we find the last order recorded
 elif (r.json()['success']):
+    print(dateTime.last_sale_id)
     another=True
     orders=[]
     offset=10
     last_id = r.json()['results'][0]
     while (another):
         for order_id in r.json()['results']:
-            if (order_id == dateTime.last_sale_id):
+            print(order_id)
+            if (not r.json()['success']) or order_id == dateTime.last_sale_id:
                 another=False
                 break
             else:
