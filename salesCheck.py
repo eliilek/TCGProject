@@ -50,12 +50,11 @@ elif (r.json()['success']):
     last_id = r.json()['results'][0]
     while (another):
         for order_id in r.json()['results']:
-            spec = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + order_id, headers={"Authorization":bearer})
             if (order_id == dateTime.last_sale_id):
                 another=False
                 break
             else:
-                orders.append(spec.json()['results'][0]['orderNumber'])
+                orders.append(order_id)
         if another:
             r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, data={"sort":"OrderDate Desc", "offset":offset})
             offset += 10
