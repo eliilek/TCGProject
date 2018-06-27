@@ -38,7 +38,7 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
                 another=False
                 break
         if another:
-            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, data={"sort":"OrderDate Desc", "offset":offset})
+            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
             offset += 10
             if not r.json()['success']:
                 another=False
@@ -58,7 +58,7 @@ elif (r.json()['success']):
             else:
                 orders.append(order_id)
         if another:
-            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, data={"sort":"OrderDate Desc", "offset":offset})
+            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
             offset += 10
             if not r.json()['success']:
                 another=False
