@@ -123,7 +123,7 @@
  "Beatdown Box Set": {"char_code":"\\e661", "abbreviation":"BTD", "group_id":16},
  "Deckmasters Garfield vs Finkel": {"char_code":"\\e662", "abbreviation":"DKM", "group_id":1311},
  "Modern Masters": {"char_code":"\\e663", "abbreviation":"MMA", "group_id":1111},
- "Modern Masters 2015": {"char_code":"\\e65e", "abbreviation":"MM2", "group_id":1503},
+ "Modern Masters 2015": {"char_code":"\\e695", "abbreviation":"MM2", "group_id":1503},
  "Eternal Masters": {"char_code":"\\e903", "abbreviation":"EMA", "group_id":1740},
  "Modern Masters 2017": {"char_code":"\\e912", "abbreviation":"MM3", "group_id":1879},
  "xren": "\\e917",
