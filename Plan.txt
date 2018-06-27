@@ -13,24 +13,6 @@ Things to do:
     Simple buttons, link to Buy or Sell
     Later add buttons to link to reports
 
-  Sell screen
-    Optional Seller Name for store credit
-    Add line, confirmation buttons same
-    Card Name input, edition dropdown, condition dropdown, quantity, foil, sell price input
-      On change, check inventory
-      Populate dropdown with each edition we have a card for
-        If only one edition, auto-select, proceed to condition
-      On edition select, populate dropdown with each condition we have for that set
-        If only one condition, auto-select, proceed to sell price
-      On condition select, populate sell price
-      Cash, card, or store credit payment options
-        Don't worry about partial payments for now
-      On confirmation of sale, check inventory again, if still present, reduce inventory by quantity
-        If no longer present, add notification to post-screen
-      Redirect to post-screen, each card saying from case or from box, based on initial_sell_price, not final
-      Present final total on post-screen, then take payment
-      Add button that links to index
-
   Reporting
     Talk to Rob about needed reports
 
