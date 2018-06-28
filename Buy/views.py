@@ -191,7 +191,7 @@ def report_sell(request):
                 except:
                     errors += request.POST['card_name_'+str(index)] + " not sold<br>"
 
-    errors += "<br>Collect " + str(total_price) + " in " + request.POST['paymentmethod']
+    errors += "<br>Collect " + str(total_price * 1.1) + " in " + request.POST['paymentmethod']
 
     return render(request, 'post.html', {'message':errors})
 

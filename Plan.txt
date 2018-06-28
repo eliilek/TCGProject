@@ -1,17 +1,9 @@
 Things to do:
 
-  Symbol Font
-    For old sets, remove symbol, put "White Border" or "Call Eli"
-    Symbols aren't showing up in options on firefox
-
   Write price adjustment
     Add a % for NM?
     Check for special card
     If no NM or LP ID, search via name, save to model
-
-  Index screen
-    Simple buttons, link to Buy or Sell
-    Later add buttons to link to reports
 
   Reporting
     Talk to Rob about needed reports
