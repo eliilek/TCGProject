@@ -61,7 +61,7 @@ function check_card_name() {
 					if (data['results'].length == 1){
 						$(this).data("expansion").data("inventory", inventory);
 						$(this).data("expansion").change(create_conditions);
-						expansion.trigger("change");
+						$(this).data("expansion").trigger("change");
 					}
         }
 			}
