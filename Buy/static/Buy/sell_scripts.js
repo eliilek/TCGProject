@@ -58,20 +58,19 @@ function check_card_name() {
 						new_option = $("<option></option>").attr({'value':data['results'][i]['group']}).html(data['results'][i]['group'] + " " + char_code).data("product_id", data['results'][i]['productId']);
 					}
 					$(this).data("expansion").append(new_option);
-					if (data['results'].length == 1){
-						$(this).data("expansion").data("inventory", inventory);
-						$(this).data("expansion").change(create_conditions);
-						$(this).data("expansion").trigger("change");
-					}
         }
 			}
-			$(this).data("expansion").change(create_conditions);
-			console.log(Object.keys(inventory).length);
-      if (Object.keys(inventory).length == 0){
+			if (Object.keys(inventory).length == 0){
         alert("No cards of that name in stock");
         return -1;
       }
 			$(this).data("expansion").data("inventory", inventory);
+			$(this).data("expansion").change(create_conditions);
+			if ($(this).data("expansion").children('option:not(:first)').length == 1){
+				$(this).data("expansion").children('option:not(:first)').prop({'selected':true});
+				$(this).data("expansion").trigger("change");
+			}
+			console.log(Object.keys(inventory).length);
 		},
     "error":function(data, textStatus, jqXHR){
       $("#submitbtn").prop("disabled", false);
