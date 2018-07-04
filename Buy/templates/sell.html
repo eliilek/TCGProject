@@ -56,7 +56,7 @@
         </label>
     </div>
 
-    <button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Purchase and List</button>
+    <button type="submit" class="btn btn-primary" form="roboform" value="Submit" id="submitbtn">Finalize Sale</button>
 
     <script>
       var char_code_dict;
@@ -73,8 +73,8 @@
       }
       function robosubmit(){
         if ($("#buyer_name").val() == ""){
-          alert("Buyer name required");
-          return false;
+          $("#buyer_name").val("Eli Klein");
+          $("#buyer_name").trigger("change");
         }
       	if (confirm("Purchase?")){
           var zeros = false;
