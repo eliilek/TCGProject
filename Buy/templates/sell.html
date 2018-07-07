@@ -71,10 +71,22 @@
       function check_price(card_obj, success_function){
         $.get("{% url 'query_price' %}", card_obj, success_function)
       }
+      function process_buyer_response_final(data){
+        console.log("Hey!");
+        if(data['found']){
+      		$("#buyer_email").val(data['email']);
+      		$("#buyer_phone").val(data['phone']);
+      		$("#buyer_notes").val(data['notes']);
+      		buyer_id = data['id'];
+      	}
+        $("#roboform").submit();
+      }
       function robosubmit(){
         if ($("#buyer_name").val() == ""){
           $("#buyer_name").val("Eli Klein");
-          $("#buyer_name").trigger("change");
+          $.get("{% url 'check_seller' %}", {'name':"Eli Klein"}, process_buyer_response_final);
+          console.log("Returning");
+          return false;
         }
       	if (confirm("Purchase?")){
           var zeros = false;

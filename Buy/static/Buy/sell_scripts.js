@@ -120,7 +120,7 @@ function set_price(){
 function robodelete(){
 	var message = "Remove line?";
 	if($(this).data("confirm-name").val() != ""){
-		message = "Remove " + $(this).data("confirm-name").val() + "?"
+		message = "Remove " + $(this).data("confirm-name").val() + "?";
 	}
 	if(confirm(message)){
 		this.parentNode.remove();
