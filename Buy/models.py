@@ -47,6 +47,18 @@ class SingleCardPurchase(models.Model):
     market_price_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
     lowest_listing_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
     lowest_direct_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
+    in_house_sale = models.BooleanField(default=False)
+
+class UntrackedCardSale(models.Model):
+    name = models.CharField(max_length=100)
+    expansion = models.CharField(max_length=100)
+    tcgplayer_card_id = models.PositiveIntegerField(blank=True, null=True)
+    sold_on = models.DateTimeField(blank=True, null=True)
+    sell_price = models.DecimalField(decimal_places=2, max_digits=6, null=True)
+    market_price_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
+    lowest_listing_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
+    lowest_direct_at_sell = models.DecimalField(decimal_places=2, blank=True, null=True, max_digits=6)
+    in_house_sale = models.BooleanField(default=True)
 
 class SpecialCard(models.Model):
     name = models.CharField(max_length=100)

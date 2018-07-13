@@ -165,11 +165,8 @@ def report_sell(request):
                         errors += "Sold " + request.POST['quantity_'+str(index)] + " " + request.POST['card_name_'+str(index)] + "<br>"
                         total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
                     update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
-                    print(update.text)
                     singles = SingleCardPurchase.objects.filter(tcgplayer_card_id=int(request.POST['tcgplayer_card_id_'+str(index)]), sold_on=None)
-                    print("Test")
                     spec = requests.get("http://api.tcgplayer.com/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
-                    print(spec.text)
                     for i in range(min(inStock, int(request.POST['quantity_'+str(index)]))):
                         if len(singles) > i:
                             singles[i].sold_on = datetime.datetime.today()
@@ -187,9 +184,32 @@ def report_sell(request):
                                     singles[i].lowest_listing_at_sell = spec.json()['results'][0]['lowestListingPrice']
                                 else:
                                     singles[i].lowest_listing_at_sell = 0
+                            singles[i].in_house_sale = True
                             singles[i].save()
-                except:
+                        else:
+                            sale = UntrackedCardSale(   name = request.POST['card_name_'+str(index)],
+                                                        expansion = request.POST['expansion_'+str(index)],
+                                                        tcgplayer_card_id = int(request.POST['tcgplayer_card_id_'+str(index)]),
+                                                        sold_on = datetime.datetime.today(),
+                                                        sell_price = float(request.POST['price_'+str(index)]),
+                                                        in_house_sale = True)
+                            if spec.json()['success']:
+                                if spec.json()['results'][0]['marketPrice'] != None:
+                                    sale.market_price_at_sell = spec.json()['results'][0]['marketPrice']
+                                else:
+                                    sale.market_price_at_sell = 0
+                                if spec.json()['results'][0]['directLowPrice'] != None:
+                                    sale.lowest_direct_at_sell = spec.json()['results'][0]['directLowPrice']
+                                else:
+                                    sale.lowest_direct_at_sell = 0
+                                if spec.json()['results'][0]['lowestListingPrice'] != None:
+                                    sale.lowest_listing_at_sell = spec.json()['results'][0]['lowestListingPrice']
+                                else:
+                                    sale.lowest_listing_at_sell = 0
+                            sale.save()
+                except Exception as e:
                     errors += request.POST['card_name_'+str(index)] + " not sold<br>"
+                    print(e)
 
     errors += "<br>Collect " + str(total_price * 1.1) + " in " + request.POST['paymentmethod']
 

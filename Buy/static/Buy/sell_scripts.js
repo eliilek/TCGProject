@@ -186,7 +186,7 @@ function create_line(){
 }
 
 function qty_change(){
-	if ($(this).val() > $(this).attr('max')){
+	if ($(this).val() > parseInt($(this).attr('max'))){
 		$(this).val($(this).attr('max'));
 	} else if ($(this).val() < 0){
 		$(this).val(0);
