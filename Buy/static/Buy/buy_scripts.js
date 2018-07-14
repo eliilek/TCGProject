@@ -72,11 +72,25 @@ function check_card_name() {
 			if (data['success']){
 				var group_id_string = "";
 				var group_id_dict = {};
+        var full_name = "";
 				for(var i=0;i<data['results'].length;i++){
 					group_id_string += data['results'][i]['groupId'] + ",";
 					group_id_dict[data['results'][i]['groupId']] = data['results'][i]['productConditions'];
+          if (full_name == ""){
+            full_name = data['results'][i]['productName'];
+          } else if (full_name != data['results'][i]['productName']){
+            alert("Check card name");
+            $("#submitbtn").prop("disabled", false);
+            $(this).data("expansion").prop("disabled", false);
+            $(this).data("condition").prop("disabled", false);
+            $(this).data("foil").prop("disabled", false);
+            $(this).data("trash_button").prop("disabled", false);
+            return false;
+          }
 				}
 				group_id_table[data['results'][0]['productName']] = group_id_dict;
+        console.log(full_name);
+        $(this).val(full_name);
 				$.ajax({
 					"headers":{"Authorization": "bearer " + bearer},
 					"url":"http://api.tcgplayer.com/catalog/groups/" + group_id_string,
