@@ -33,6 +33,20 @@ function check_card_name() {
       }
       var inventory = {};
       var productIdString = "";
+
+/*			var clean_data = [];
+			var exact_match = false;
+			var prev_name;
+			for(var i=0;i<data['results'].length;i++){
+				if (data['results'][i]['skuCount'] != 0){
+					if (!exact_match && data['results'][i]['name'].toUpperCase() == $(this).val().toUpperCase()){
+						exact_match = true;
+						$(this).val(data['results'][i]['name']);
+						clean_data.push()
+					}
+				}
+			} */
+
       for(var i=0;i<data['results'].length;i++){
         if (data['results'][i]['skuCount'] != 0){
           var product_dict = {'group':data['results'][i]['group'], 'productId':data['results'][i]['productId'], 'skus':[]};
@@ -60,6 +74,8 @@ function check_card_name() {
 					$(this).data("expansion").append(new_option);
         }
 			}
+
+
 			if (Object.keys(inventory).length == 0){
         alert("No cards of that name in stock");
         return -1;
@@ -96,7 +112,7 @@ function create_conditions(){
 	} else {
 		$(this).data("condition").children('option:not(:first)').remove();
 		for (var i=0; i<product['skus'].length; i++){
-			var matches = product['skus'][0]['condition'].match(/\b(\w)/g);
+			var matches = product['skus'][i]['condition'].match(/\b(\w)/g);
 			var short = matches.join('');
 			$(this).data("condition").append($("<option></option>").val(product['skus'][1]['condition']).html(short).data("sku", product['skus'][i]));
 		}
