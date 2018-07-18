@@ -5,8 +5,11 @@ Things to do:
     Check for special card
     If no NM or LP ID, search via name, save to model
 
+  Sales check
+    If inventory < # of cards in roboklein, mark oldest as sold with no pricing info
+    If inventory > # of cards in roboklein, create more with no buy info
+
   Reporting
-    Talk to Rob about needed reports
 
   List Screen
     Similar to Buy Screen, no buy price

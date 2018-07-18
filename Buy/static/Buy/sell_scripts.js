@@ -34,7 +34,7 @@ function check_card_name() {
       var inventory = {};
       var productIdString = "";
 
-/*			var clean_data = [];
+			/*var clean_data = [];
 			var exact_match = false;
 			var prev_name;
 			for(var i=0;i<data['results'].length;i++){
@@ -45,7 +45,7 @@ function check_card_name() {
 						clean_data.push()
 					}
 				}
-			} */
+			}*/
 
       for(var i=0;i<data['results'].length;i++){
         if (data['results'][i]['skuCount'] != 0){

@@ -76,7 +76,12 @@ def report_buy(request):
                 seller.save()
         if 'seller_notes' in request.POST.keys() and request.POST['seller_notes'] != "":
             seller.notes = request.POST['seller_notes']
-            seller.save()
+        if 'seller_email' in request.POST.keys() and request.POST['seller_email'] != "":
+            seller.email = request.POST['seller_email']
+        if 'seller_phone' in request.POST.keys() and request.POST['seller_phone'] != "":
+            seller.phone = request.POST['seller_phone']
+        seller.save()
+
         block = CardPurchaseBlock(seller=seller, payment_method=request.POST['paymentmethod'])
         block.save()
         index = 0
@@ -148,7 +153,11 @@ def report_sell(request):
         buyer.save()
     if 'buyer_notes' in request.POST.keys() and request.POST['buyer_notes'] != "":
         buyer.notes = request.POST['buyer_notes']
-        buyer.save()
+    if 'buyer_email' in request.POST.keys() and request.POST['buyer_email'] != "":
+        buyer.email = request.POST['buyer_email']
+    if 'buyer_phone' in request.POST.keys() and request.POST['buyer_phone'] != "":
+        buyer.phone = request.POST['buyer_phone']
+    buyer.save()
 
     bearer = "bearer " + update_bearer().bearer
 
