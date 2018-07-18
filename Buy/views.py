@@ -180,7 +180,8 @@ def report_sell(request):
                         new_quantity = inStock - int(request.POST['quantity_'+str(index)])
                         errors += "Sold " + request.POST['quantity_'+str(index)] + " " + request.POST['card_name_'+str(index)] + "<br>"
                         total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
-                    update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
+                    update = requests.post("http://api.tcgplayer.com/stores/" + os.environ['store_key'] + "/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)] + "/quantity", headers={"Authorization":bearer}, json={"quantity":new_quantity - inStock})
+                    #update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
                     singles = SingleCardPurchase.objects.filter(tcgplayer_card_id=int(request.POST['tcgplayer_card_id_'+str(index)]), sold_on=None)
                     spec = requests.get("http://api.tcgplayer.com/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
                     for i in range(min(inStock, int(request.POST['quantity_'+str(index)]))):
