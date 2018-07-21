@@ -34,46 +34,78 @@ function check_card_name() {
       var inventory = {};
       var productIdString = "";
 
-			/*var clean_data = [];
+			var clean_data = [];
 			var exact_match = false;
-			var prev_name;
+			var start_name = "";
+			var contains_name = "";
 			for(var i=0;i<data['results'].length;i++){
 				if (data['results'][i]['skuCount'] != 0){
 					if (!exact_match && data['results'][i]['name'].toUpperCase() == $(this).val().toUpperCase()){
 						exact_match = true;
 						$(this).val(data['results'][i]['name']);
-						clean_data.push()
+						clean_data = [];
+						clean_data.push(data['results'][i]);
+					} else if (data['results'][i]['name'].toUpperCase() == $(this).val().toUpperCase()){
+						clean_data.push(data['results'][i]);
+					} else if (!exact_match && data['results'][i]['name'].toUpperCase().startsWith($(this).val().toUpperCase())) {
+						if (contains_name != "" && start_name == ""){
+							clean_data = [];
+							clean_data.push(data['results'][i]);
+							start_name = data['results'][i]['name']
+						} else if (start_name == "" || start_name == data['results'][i]['name']){
+							clean_data.push(data['results'][i]);
+							start_name = data['results'][i]['name'];
+						} else {
+							alert("Multiple cards found - check spelling?");
+							return -1;
+						}
+					} else if (!exact_match && data['results'][i]['name'].toUpperCase().includes($(this).val().toUpperCase())) {
+						if (start_name == "" && (contains_name == "" || contains_name == data['results'][i]['name'])){
+							clean_data.push(data['results'][i]);
+							contains_name = data['results'][i]['name'];
+						} else if (start_name == "") {
+							alert("Multiple cards found - check spelling?");
+							return -1;
+						}
 					}
 				}
-			}*/
+			}
+			if (!exact_match){
+				if (start_name != ""){
+					$(this).val(start_name);
+				} else if (contains_name){
+					$(this).val(contains_name);
+				} else {
+					alert("No cards of that name in stock");
+					return -1;
+				}
+			}
 
-      for(var i=0;i<data['results'].length;i++){
-        if (data['results'][i]['skuCount'] != 0){
-          var product_dict = {'group':data['results'][i]['group'], 'productId':data['results'][i]['productId'], 'skus':[]};
-					var char_code = char_code_dict[data['results'][i]['group']];
+      for(var i=0;i<clean_data.length;i++){
+          var product_dict = {'group':clean_data[i]['group'], 'productId':clean_data[i]['productId'], 'skus':[]};
+					var char_code = char_code_dict[clean_data[i]['group']];
 					console.log(char_code);
 					if(char_code == undefined){
 						char_code = "";
 					} else {
 						char_code = char_code['char_code'].replace("\\", "&#x");
 					}
-          for(var j=0; j<data['results'][i]['skuCount'];j++){
-            product_dict['skus'].push({'sku':data['results'][i]['skus'][j]['skuId'],
-                                       'price':data['results'][i]['skus'][j]['price'],
-                                       'quantity':data['results'][i]['skus'][j]['quantity'],
-                                       'condition':data['results'][i]['skus'][j]['condition']['name'],
-                                       'foil':data['results'][i]['skus'][j]['foil']
+          for(var j=0; j<clean_data[i]['skuCount'];j++){
+            product_dict['skus'].push({'sku':clean_data[i]['skus'][j]['skuId'],
+                                       'price':clean_data[i]['skus'][j]['price'],
+                                       'quantity':clean_data[i]['skus'][j]['quantity'],
+                                       'condition':clean_data[i]['skus'][j]['condition']['name'],
+                                       'foil':clean_data[i]['skus'][j]['foil']
                                      });
             }
-          inventory[data['results'][i]['productId']] = product_dict;
-					if (data['results'].length == 1){
-						new_option = $("<option selected></option>").attr({'value':data['results'][i]['group']}).html(data['results'][i]['group'] + " " + char_code).data("product_id", data['results'][i]['productId']);
+          inventory[clean_data[i]['productId']] = product_dict;
+					if (clean_data.length == 1){
+						new_option = $("<option selected></option>").attr({'value':clean_data[i]['group']}).html(clean_data[i]['group'] + " " + char_code).data("product_id", clean_data[i]['productId']);
 					} else {
-						new_option = $("<option></option>").attr({'value':data['results'][i]['group']}).html(data['results'][i]['group'] + " " + char_code).data("product_id", data['results'][i]['productId']);
+						new_option = $("<option></option>").attr({'value':clean_data[i]['group']}).html(clean_data[i]['group'] + " " + char_code).data("product_id", clean_data[i]['productId']);
 					}
 					$(this).data("expansion").append(new_option);
         }
-			}
 
 
 			if (Object.keys(inventory).length == 0){

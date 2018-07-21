@@ -1,7 +1,6 @@
 Things to do:
 
   Write price adjustment
-    Add a % for NM?
     Check for special card
     If no NM or LP ID, search via name, save to model
 
