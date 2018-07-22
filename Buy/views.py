@@ -9,6 +9,7 @@ from dateutil.parser import parse
 from django.forms.models import model_to_dict
 import re
 from math import ceil
+from django.utils import timezone
 
 def update_bearer():
     if Token.objects.all().exists():
@@ -186,7 +187,7 @@ def report_sell(request):
                     spec = requests.get("http://api.tcgplayer.com/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
                     for i in range(min(inStock, int(request.POST['quantity_'+str(index)]))):
                         if len(singles) > i:
-                            singles[i].sold_on = datetime.datetime.today()
+                            singles[i].sold_on = timezone.now()
                             singles[i].sell_price = float(request.POST['price_'+str(index)])
                             if spec.json()['success']:
                                 if spec.json()['results'][0]['marketPrice'] != None:
@@ -207,7 +208,7 @@ def report_sell(request):
                             sale = UntrackedCardSale(   name = request.POST['card_name_'+str(index)],
                                                         expansion = request.POST['expansion_'+str(index)],
                                                         tcgplayer_card_id = int(request.POST['tcgplayer_card_id_'+str(index)]),
-                                                        sold_on = datetime.datetime.today(),
+                                                        sold_on = timezone.now(),
                                                         sell_price = float(request.POST['price_'+str(index)]),
                                                         in_house_sale = True)
                             if spec.json()['success']:

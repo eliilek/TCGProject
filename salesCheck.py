@@ -91,17 +91,45 @@ for item in orders:
 #Check if items have been listed too long, depreciate
 remaining_cards = SingleCardPurchase.objects.filter(sold_on=None).order_by("tcgplayer_card_id", "block__bought_on")
 previous_id = ""
+checked_remaining = {}
 batch = []
 for card in remaining_cards:
     if card.tcgplayer_card_id != previous_id:
-        previous_id = card.tcgplayer_card_id
-        value = price_check(card)
-        if "error" in value:
-            print(value['error'])
-            continue
+        checked_remaining[card.tcgplayer_card_id] = [card,]
+    else:
+        checked_remaining[card.tcgplayer_card_id].append(card)
+
+#Checked remaining are in order from oldest to newest within each ID
+new_block = CardPurchaseBlock(seller=Seller.objects.get(name="Eli Klein"))
+new_block.save()
+for tcgplayer_id in checked_remaining:
+    value = price_check(checked_remaining[tcgplayer_id][0])
+    if "error" in value:
+        print(value['error'])
+        continue
+    r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+str(tcgplayer_id)+"/quantity", headers={'Authorization':bearer})
+    if (r.status_code == 200 and r.json()['success']):
+        difference = r.json()['results'][0]['quantity'] - len(checked_remaining[tcgplayer_id])
+        if difference < 0:
+            for i in range(-1 * difference):
+                checked_remaining[tcgplayer_id][i].sold_on = timezone.now()
+        elif difference > 0:
+            for i in range(difference):
+                new_record = SingleCardPurchase(block=new_block,
+                                                name=checked_remaining[tcgplayer_id][0].name,
+                                                expansion=checked_remaining[tcgplayer_id][0].expansion,
+                                                tcgplayer_card_id=tcgplayer_id,
+                                                tcgplayer_NM_id=checked_remaining[tcgplayer_id][0].tcgplayer_NM_id,
+                                                tcgplayer_LP_id=checked_remaining[tcgplayer_id][0].tcgplayer_LP_id,
+                                                buy_price=0.0,
+                                                lowest_listing_at_buy=0.0,
+                                                lowest_direct_at_buy=0.0,
+                                                market_price_at_buy=0.0,
+                                                initial_sell_price=value['price'])
+                new_record.save()
+        card = checked_remaining[tcgplayer_id][0]
         card.base_price = value['price']
         card.save()
-
         delta = timezone.now() - card.block.bought_on
         print(card.name + " " + str(delta.days) + " days $" + str(card.base_price))
         if delta.days <= 8:
