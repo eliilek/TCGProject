@@ -96,8 +96,11 @@ batch = []
 for card in remaining_cards:
     if card.tcgplayer_card_id != previous_id:
         checked_remaining[card.tcgplayer_card_id] = [card,]
+        previous_id = card.tcgplayer_card_id
     else:
         checked_remaining[card.tcgplayer_card_id].append(card)
+
+print(remaining_cards)
 
 #Checked remaining are in order from oldest to newest within each ID
 new_block = CardPurchaseBlock(seller=Seller.objects.get(name="Eli Klein"))
