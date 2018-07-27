@@ -10,6 +10,7 @@ from django.forms.models import model_to_dict
 import re
 from math import ceil
 from django.utils import timezone
+import csv
 
 def update_bearer():
     if Token.objects.all().exists():
@@ -233,6 +234,17 @@ def report_sell(request):
 
     return render(request, 'post.html', {'message':errors})
 
+def download_results(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="sales_' + str(timezone.now()) + '_data.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Name', 'Expansion', 'Buy Price', 'Lowest Listing (buy)', 'Lowest Direct (buy)', 'Market (buy)', 'Initial Sell Price', 'Sold On', 'Final Sell Price', 'Market (sell)', 'Lowest Listing (sell)', 'Lowest Direct (sell)', 'In House'])
+
+    for card in SingleCardPurchase.objects.all():
+        writer.writerow([card.name, card.expansion, card.buy_price, card.lowest_listing_at_buy, card.lowest_direct_at_buy, card.market_price_at_buy, card.initial_sell_price, card.sold_on, card.sell_price, card.market_price_at_sell, card.lowest_listing_at_sell, card.lowest_direct_at_sell, card.in_house_sale])
+
+    return response
 
 def price_check(card):
     context = ""

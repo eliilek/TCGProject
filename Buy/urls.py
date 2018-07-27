@@ -25,5 +25,6 @@ urlpatterns = [
     path('report/sell', views.report_sell, name='report_sell'),
     path('seller', views.seller_info, name='check_seller'),
     path('price', views.query_price, name='query_price'),
-    path('trade', views.trade, name='trade')
+    path('trade', views.trade, name='trade'),
+    path('download', views.download_results, name='download_results')
 ]

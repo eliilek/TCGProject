@@ -100,8 +100,6 @@ for card in remaining_cards:
     else:
         checked_remaining[card.tcgplayer_card_id].append(card)
 
-print(remaining_cards)
-
 #Checked remaining are in order from oldest to newest within each ID
 new_block = CardPurchaseBlock(seller=Seller.objects.get(name="Eli Klein"))
 new_block.save()
