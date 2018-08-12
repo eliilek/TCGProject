@@ -177,11 +177,11 @@ def report_sell(request):
                     foil_cond_name = request.POST['condition_'+str(index)] + " " + request.POST['card_name_'+str(index)]
                     if inStock < int(request.POST['quantity_'+str(index)]):
                         new_quantity = 0
-                        errors += "Only have " + inStock + " " + foil_cond_name + " " + request.POST['expansion_'+str(index)] + " available to sell<br>"
+                        errors += "Only have " + inStock + " " + foil_cond_name + " from " + request.POST['expansion_'+str(index)] + " available to sell<br>"
                         total_price += inStock * float(request.POST['price_'+str(index)])
                     else:
                         new_quantity = inStock - int(request.POST['quantity_'+str(index)])
-                        errors += "Sold " + request.POST['quantity_'+str(index)] + " " + foil_cond_name + " " + request.POST['expansion_'+str(index)] + "<br>"
+                        errors += "Sold " + request.POST['quantity_'+str(index)] + " " + foil_cond_name + " from " + request.POST['expansion_'+str(index)] + "<br>"
                         total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
                     update = requests.post("http://api.tcgplayer.com/stores/" + os.environ['store_key'] + "/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)] + "/quantity", headers={"Authorization":bearer}, json={"quantity":new_quantity - inStock})
                     #update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
