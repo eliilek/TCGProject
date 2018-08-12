@@ -174,13 +174,14 @@ def report_sell(request):
                 try:
                     print(r.json())
                     inStock = r.json()['results'][0]['quantity']
+                    foil_cond_name = request.POST['condition_'+str(index)] + " " + request.POST['card_name_'+str(index)]
                     if inStock < int(request.POST['quantity_'+str(index)]):
                         new_quantity = 0
-                        errors += "Only have " + inStock + " " + request.POST['card_name_'+str(index)] + " available to sell<br>"
+                        errors += "Only have " + inStock + " " + foil_cond_name + " " + request.POST['expansion_'+str(index)] + " available to sell<br>"
                         total_price += inStock * float(request.POST['price_'+str(index)])
                     else:
                         new_quantity = inStock - int(request.POST['quantity_'+str(index)])
-                        errors += "Sold " + request.POST['quantity_'+str(index)] + " " + request.POST['card_name_'+str(index)] + "<br>"
+                        errors += "Sold " + request.POST['quantity_'+str(index)] + " " + foil_cond_name + " " + request.POST['expansion_'+str(index)] + "<br>"
                         total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
                     update = requests.post("http://api.tcgplayer.com/stores/" + os.environ['store_key'] + "/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)] + "/quantity", headers={"Authorization":bearer}, json={"quantity":new_quantity - inStock})
                     #update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
@@ -230,7 +231,7 @@ def report_sell(request):
                     errors += request.POST['card_name_'+str(index)] + " not sold<br>"
                     print(e)
 
-    errors += "<br>Collect " + str(total_price * 1.1) + " in " + request.POST['paymentmethod']
+    errors += "<br>Ring up " + str(total_price) + " in Crystal Commerce (under Roboklein Magic Singles)"
 
     return render(request, 'post.html', {'message':errors})
 
@@ -239,10 +240,10 @@ def download_results(request):
     response['Content-Disposition'] = 'attachment; filename="sales_' + str(timezone.now()) + '_data.csv"'
 
     writer = csv.writer(response)
-    writer.writerow(['Name', 'Expansion', 'Buy Price', 'Lowest Listing (buy)', 'Lowest Direct (buy)', 'Market (buy)', 'Initial Sell Price', 'Sold On', 'Final Sell Price', 'Market (sell)', 'Lowest Listing (sell)', 'Lowest Direct (sell)', 'In House'])
+    writer.writerow(['Name', 'Expansion', 'Bought On', 'Buy Price', 'Lowest Listing (buy)', 'Lowest Direct (buy)', 'Market (buy)', 'Initial Sell Price', 'Sold On', 'Final Sell Price', 'Market (sell)', 'Lowest Listing (sell)', 'Lowest Direct (sell)', 'In House'])
 
     for card in SingleCardPurchase.objects.all():
-        writer.writerow([card.name, card.expansion, card.buy_price, card.lowest_listing_at_buy, card.lowest_direct_at_buy, card.market_price_at_buy, card.initial_sell_price, card.sold_on, card.sell_price, card.market_price_at_sell, card.lowest_listing_at_sell, card.lowest_direct_at_sell, card.in_house_sale])
+        writer.writerow([card.name, card.expansion, card.block.bought_on, card.buy_price, card.lowest_listing_at_buy, card.lowest_direct_at_buy, card.market_price_at_buy, card.initial_sell_price, card.sold_on, card.sell_price, card.market_price_at_sell, card.lowest_listing_at_sell, card.lowest_direct_at_sell, card.in_house_sale])
 
     return response
 
