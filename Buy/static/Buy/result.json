@@ -98,6 +98,7 @@
  "Ixalan": {"char_code":"\\e92e", "abbreviation":"XLN", "group_id":2043},
  "Rivals of Ixalan": {"char_code":"\\e92f", "abbreviation":"RIX", "group_id":2098},
  "Dominaria": {"char_code":"\\e93f", "abbreviation":"DOM", "group_id":2199},
+ "Guilds of Ravnica": {"char_code":"\\e94b", "abbreviation":"GRN", "group_id":2290},
  "van": "\\e655",
  "Planechase": {"char_code":"\\e656", "abbreviation":"HOP", "group_id":84},
  "Archenemy": {"char_code":"\\e657", "abbreviation":"ARC", "group_id":12},
@@ -219,4 +220,7 @@
  "x4ea": "\\e929",
  "papac": "\\e92a",
  "peuro": "\\e92b",
+ "Signature Spellbook: Jace": {"char_code":"\\e944", "abbreviation":"SS1", "group_id":2220},
+ "Global Series Jiang Yanggu & Mu Yanling": {"char_code":"\\e945", "abbreviation":"GS1", "group_id":2247},
+ "Commander 2018": {"char_code":"\\e946", "abbreviation":"C18", "group_id":2251},
  "pfnm": "\\e937"}
