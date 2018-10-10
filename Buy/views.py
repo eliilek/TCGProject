@@ -97,23 +97,27 @@ def report_buy(request):
             if match:
                 index = match.group(1)
                 if (request.POST['card_name_'+str(index)] != "") and (int(request.POST['quantity_'+str(index)]) > 0):
-                    for i in range(0, int(request.POST['quantity_'+str(index)])):
-                        single = SingleCardPurchase(
-                            block = block,
-                            name = request.POST['card_name_'+str(index)],
-                            expansion = request.POST['expansion_'+str(index)],
-                            tcgplayer_card_id = request.POST['tcgplayer_card_id_'+str(index)],
-                            tcgplayer_NM_id = request.POST['tcgplayer_nm_id_'+str(index)],
-                            tcgplayer_LP_id = request.POST['tcgplayer_lp_id_'+str(index)],
-                            buy_price = float(request.POST['price_'+str(index)]),
-                            initial_sell_price = float(request.POST['sell_price_'+str(index)]),
-                            base_price = float(request.POST['sell_price_'+str(index)]),
-                            lowest_listing_at_buy = float(request.POST['lowest_listing_at_buy_'+str(index)]),
-                            lowest_direct_at_buy = float(request.POST['lowest_direct_at_buy_'+str(index)]),
-                            market_price_at_buy = float(request.POST['market_price_'+str(index)])
-                        )
-                        single.save()
-                        total_buy += float(request.POST['price_'+str(index)])
+                    try:
+                        for i in range(0, int(request.POST['quantity_'+str(index)])):
+                            single = SingleCardPurchase(
+                                block = block,
+                                name = request.POST['card_name_'+str(index)],
+                                expansion = request.POST['expansion_'+str(index)],
+                                tcgplayer_card_id = request.POST['tcgplayer_card_id_'+str(index)],
+                                tcgplayer_NM_id = request.POST['tcgplayer_nm_id_'+str(index)],
+                                tcgplayer_LP_id = request.POST['tcgplayer_lp_id_'+str(index)],
+                                buy_price = float(request.POST['price_'+str(index)]),
+                                initial_sell_price = float(request.POST['sell_price_'+str(index)]),
+                                base_price = float(request.POST['sell_price_'+str(index)]),
+                                lowest_listing_at_buy = float(request.POST['lowest_listing_at_buy_'+str(index)]),
+                                lowest_direct_at_buy = float(request.POST['lowest_direct_at_buy_'+str(index)]),
+                                market_price_at_buy = float(request.POST['market_price_'+str(index)])
+                            )
+                            single.save()
+                            total_buy += float(request.POST['price_'+str(index)])
+                    except:
+                        errors += single.name + " not auto-listed<br>"
+                        continue
                     if ('auto_list_'+str(index) in request.POST.keys() and request.POST['auto_list_'+str(index)] == "on"):
                         old_quantity = 0
                         r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id+"/quantity", headers={'Authorization':bearer})
