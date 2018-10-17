@@ -18,7 +18,7 @@ function check_card_name() {
 
 	$.ajax({
 		"headers":{"Authorization": "bearer " + bearer},
-		"url":"http://api.tcgplayer.com/stores/" + store_key + "/inventory/products",
+		"url":"http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/inventory/products",
 		"data":{'categoryId':1, 'productName':$(this).val(), 'skuLimit':10, 'limit':50},
     "context":this,
 		"success":function(data, textStatus, jqXHR){

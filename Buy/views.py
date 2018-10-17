@@ -120,11 +120,11 @@ def report_buy(request):
                         continue
                     if ('auto_list_'+str(index) in request.POST.keys() and request.POST['auto_list_'+str(index)] == "on"):
                         old_quantity = 0
-                        r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id+"/quantity", headers={'Authorization':bearer})
+                        r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id+"/quantity", headers={'Authorization':bearer})
                         if (r.status_code == 200 and r.json()['success']):
                             old_quantity = int(r.json()['results'][0]['quantity'])
                         quantity = old_quantity + int(request.POST['quantity_'+str(index)])
-                        r = requests.put("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id, headers={'Authorization':bearer, 'Content-Type':'application/json'}, json={'price':(single.initial_sell_price * 1.1 if single.initial_sell_price * 1.1 <= single.initial_sell_price + 5 else single.initial_sell_price + 5), 'quantity':quantity, 'channelId':0})
+                        r = requests.put("http://api.tcgplayer.com/v1.10.0/stores/"+os.environ['store_key']+"/inventory/skus/"+single.tcgplayer_card_id, headers={'Authorization':bearer, 'Content-Type':'application/json'}, json={'price':(single.initial_sell_price * 1.1 if single.initial_sell_price * 1.1 <= single.initial_sell_price + 5 else single.initial_sell_price + 5), 'quantity':quantity, 'channelId':0})
                         if (r.status_code != 200):
                             errors += single.name + " price/quantity not updated<br>"
                         else:
@@ -174,7 +174,7 @@ def report_sell(request):
         if match:
             index = match.group(1)
             if (request.POST['card_name_'+str(index)] != "") and (int(request.POST['quantity_'+str(index)]) > 0):
-                r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+request.POST['tcgplayer_card_id_'+str(index)]+"/quantity", headers={"Authorization":bearer})
+                r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/"+os.environ['store_key']+"/inventory/skus/"+request.POST['tcgplayer_card_id_'+str(index)]+"/quantity", headers={"Authorization":bearer})
                 try:
                     print(r.json())
                     inStock = r.json()['results'][0]['quantity']
@@ -187,10 +187,10 @@ def report_sell(request):
                         new_quantity = inStock - int(request.POST['quantity_'+str(index)])
                         errors += "Sold " + request.POST['quantity_'+str(index)] + " " + foil_cond_name + " from " + request.POST['expansion_'+str(index)] + "<br>"
                         total_price += int(request.POST['quantity_'+str(index)]) * float(request.POST['price_'+str(index)])
-                    update = requests.post("http://api.tcgplayer.com/stores/" + os.environ['store_key'] + "/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)] + "/quantity", headers={"Authorization":bearer}, json={"quantity":new_quantity - inStock})
-                    #update = requests.put("http://api.tcgplayer.com/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
+                    update = requests.post("http://api.tcgplayer.com/v1.10.0/stores/" + os.environ['store_key'] + "/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)] + "/quantity", headers={"Authorization":bearer}, json={"quantity":new_quantity - inStock})
+                    #update = requests.put("http://api.tcgplayer.com/v1.10.0/stores/" + os.environ['store_key'] +"/inventory/skus/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer, 'Content-Type':'application/json'}, json={'quantity':new_quantity, 'price':float(request.POST['price_'+str(index)]), 'channelId':0})
                     singles = SingleCardPurchase.objects.filter(tcgplayer_card_id=int(request.POST['tcgplayer_card_id_'+str(index)]), sold_on=None)
-                    spec = requests.get("http://api.tcgplayer.com/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
+                    spec = requests.get("http://api.tcgplayer.com/v1.10.0/pricing/sku/" + request.POST['tcgplayer_card_id_'+str(index)], headers={"Authorization":bearer})
                     for i in range(min(inStock, int(request.POST['quantity_'+str(index)]))):
                         if len(singles) > i:
                             singles[i].sold_on = timezone.now()
@@ -261,16 +261,16 @@ def price_check(card):
     bearer = "bearer " + update_bearer().bearer
 
     if card['tcgplayer_NM_id'] and card['tcgplayer_LP_id']:
-        r = requests.get("http://api.tcgplayer.com/pricing/sku/" + str(card['tcgplayer_NM_id']) + "," + str(card['tcgplayer_LP_id']), headers={"Authorization":bearer})
+        r = requests.get("http://api.tcgplayer.com/v1.10.0/pricing/sku/" + str(card['tcgplayer_NM_id']) + "," + str(card['tcgplayer_LP_id']), headers={"Authorization":bearer})
         if r.json()['success']:
             standard = False
             standard_list = [thing.name for thing in StandardSet.objects.all()]
-            card_details = requests.get("http://api.tcgplayer.com/catalog/products", headers={"Authorization":bearer}, data={'categoryId':1, 'productName':card['name'], 'limit':50})
+            card_details = requests.get("http://api.tcgplayer.com/v1.10.0/catalog/products", headers={"Authorization":bearer}, data={'categoryId':1, 'productName':card['name'], 'limit':50})
             if card_details.json()['success']:
                 group_id_string = ""
                 for data in card_details.json()['results']:
                     group_id_string = group_id_string + "," + str(data['groupId'])
-                card_standard = requests.get("http://api.tcgplayer.com/catalog/groups/" + group_id_string, headers={"Authorization":bearer})
+                card_standard = requests.get("http://api.tcgplayer.com/v1.10.0/catalog/groups/" + group_id_string, headers={"Authorization":bearer})
                 if card_standard.json()['success']:
                     for group in card_standard.json()['results']:
                         if group['name'] in standard_list:
@@ -339,7 +339,7 @@ def price_check(card):
             if not standard:
                 premium = premium + 0.07
 
-            card_cond = requests.get("http://api.tcgplayer.com/catalog/skus/" + str(card['tcgplayer_card_id']), headers={"Authorization":bearer})
+            card_cond = requests.get("http://api.tcgplayer.com/v1.10.0/catalog/skus/" + str(card['tcgplayer_card_id']), headers={"Authorization":bearer})
             if card_cond.json()['success']:
                 if card_cond.json()['results'][0]['conditionId'] == 1:
                     min_base = min_base * 1.05

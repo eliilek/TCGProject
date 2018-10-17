@@ -64,7 +64,7 @@ function check_card_name() {
 
 	$.ajax({
 		"headers":{"Authorization": "bearer " + bearer},
-		"url":"http://api.tcgplayer.com/catalog/products",
+		"url":"http://api.tcgplayer.com/v1.10.0/catalog/products",
 		"data":{'categoryId':1, 'productName':$(this).val(), 'limit':50},
     "context":this,
 		"success":function(data, textStatus, jqXHR){
@@ -93,7 +93,7 @@ function check_card_name() {
         $(this).val(full_name);
 				$.ajax({
 					"headers":{"Authorization": "bearer " + bearer},
-					"url":"http://api.tcgplayer.com/catalog/groups/" + group_id_string,
+					"url":"http://api.tcgplayer.com/v1.10.0/catalog/groups/" + group_id_string,
           "context":this,
 					"success":function(data, textStatus, jqXHR){
 						if (data['success']){
@@ -190,7 +190,7 @@ function price_pull(){
     $(this).data("tcgplayer_card_id").val(card_id[0]['productConditionId']);
     $.ajax({
       "headers":{"Authorization": "bearer " + bearer},
-      "url":"http://api.tcgplayer.com/pricing/sku/" + card_id[0]['productConditionId'].toString(),
+      "url":"http://api.tcgplayer.com/v1.10.0/pricing/sku/" + card_id[0]['productConditionId'].toString(),
       "context":this,
       "success":function(data, textStatus, jqXHR){
         if(data['results'][0]['marketPrice'] != null){
