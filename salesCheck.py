@@ -19,7 +19,7 @@ else:
 bearer = "bearer " + update_bearer().bearer
 store_key = os.environ['store_key']
 
-r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc"})
+r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc"})
 #Keep pulling orders until we find one too early
 last_id = None
 if (r.json()['success'] and dateTime.last_sale_id == ""):
@@ -30,7 +30,7 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
     while (another):
         print(r.text)
         for order_id in r.json()['results']:
-            spec = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + order_id, headers={"Authorization":bearer})
+            spec = requests.get("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/orders/" + order_id, headers={"Authorization":bearer})
             print(spec.text)
             if (spec.json()['success'] and parse(spec.json()['results'][0]['orderedOn'], default=timezone.now()) >= dateTime.last_check):
                 orders.append(spec.json()['results'][0]['orderNumber'])
@@ -38,7 +38,7 @@ if (r.json()['success'] and dateTime.last_sale_id == ""):
                 another=False
                 break
         if another:
-            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
+            r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
             offset += 10
             if not r.json()['success']:
                 another=False
@@ -58,7 +58,7 @@ elif (r.json()['success']):
             else:
                 orders.append(order_id)
         if another:
-            r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
+            r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/orders", headers={"Authorization":bearer}, params={"sort":"OrderDate Desc", "offset":offset})
             offset += 10
             if not r.json()['success']:
                 another=False
@@ -66,7 +66,7 @@ elif (r.json()['success']):
 #Handle items in orders
 for item in orders:
     print(item)
-    r = requests.get("http://api.tcgplayer.com/stores/" + store_key + "/orders/" + item + "/items", headers={"Authorization":bearer})
+    r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/orders/" + item + "/items", headers={"Authorization":bearer})
     print(r.text)
     if (r.json()['success']):
         for item in r.json()['results']:
@@ -78,7 +78,7 @@ for item in orders:
                 print(cards)
                 if len(cards) > 0:
                     if pricing == None:
-                        pricing = requests.get("http://api.tcgplayer.com/pricing/sku/" + str(sku), headers={"Authorization":bearer})
+                        pricing = requests.get("http://api.tcgplayer.com/v1.10.0/pricing/sku/" + str(sku), headers={"Authorization":bearer})
                     card_sold = cards.earliest('block__bought_on')
                     card_sold.sold_on = timezone.now()
                     card_sold.sell_price = item['price']
@@ -108,7 +108,7 @@ for tcgplayer_id in checked_remaining:
     if "error" in value:
         print(value['error'])
         continue
-    r = requests.get("http://api.tcgplayer.com/stores/"+os.environ['store_key']+"/inventory/skus/"+str(tcgplayer_id)+"/quantity", headers={'Authorization':bearer})
+    r = requests.get("http://api.tcgplayer.com/v1.10.0/stores/"+os.environ['store_key']+"/inventory/skus/"+str(tcgplayer_id)+"/quantity", headers={'Authorization':bearer})
     if (r.status_code == 200 and r.json()['success']):
         difference = r.json()['results'][0]['quantity'] - len(checked_remaining[tcgplayer_id])
         if difference < 0:
@@ -151,7 +151,7 @@ for tcgplayer_id in checked_remaining:
 
         batch.append({"skuId":card.tcgplayer_card_id, "price":price, "channelId":0})
 
-requests.post("http://api.tcgplayer.com/stores/" + store_key + "/inventory/skus/batch", headers={"Authorization":bearer}, json=batch)
+requests.post("http://api.tcgplayer.com/v1.10.0/stores/" + store_key + "/inventory/skus/batch", headers={"Authorization":bearer}, json=batch)
 
 dateTime.delete()
 if last_id:
