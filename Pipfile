@@ -8,7 +8,7 @@ name = "pypi"
 [packages]
 
 pytz = "*"
-django = "==2.0.3"
+django = "==2.0.12"
 requests = "*"
 python-dateutil = "*"
 dj-database-url = "*"
